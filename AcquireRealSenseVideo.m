@@ -1,4 +1,20 @@
 function [RealSenseData] = AcquireRealSenseVideo(numFramesToAcquire)
+%________________________________________________________________________________________________________________________
+% Written by Kevin L. Turner
+% The Pennsylvania State University, Dept. of Biomedical Engineering
+% https://github.com/KL-Turner
+%________________________________________________________________________________________________________________________
+%
+%   Purpse:  
+%________________________________________________________________________________________________________________________
+%
+%   Inputs: 
+%
+%   Outputs: 
+%
+%   Last Revised: May 12th, 2019
+%________________________________________________________________________________________________________________________
+
 % Setup RealSense camera
 pipe = realsense.pipeline();
 colorizer = realsense.colorizer();
