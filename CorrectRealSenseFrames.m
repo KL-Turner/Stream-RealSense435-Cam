@@ -29,25 +29,15 @@ imgStack = cat(3, allImgs{:});
 correctedImgStack = Kalman_Stack_Filter(imgStack, 0.5);
 RealSenseData.correctedImageStack = correctedImgStack;
 
+disp('Determining proper caxis scaling...'); disp(' ')
 for b = 1:length(imgStack)
     clear tempImg tempMax tempMin
     tempImg = correctedImgStack(:,:,b);
-    tempMax = max(tempImg(:));
-    tempMin = min(tempImg(:));
-    if b == 1
-        maxVal = tempMax;
-        minVal = tempMin;
-    else
-        if tempMax > maxVal
-            maxVal = tempMax;
-        end
-        if tempMin < minVal
-            minVal = tempMin;
-        end
-    end
+    tempMax(1,b) = max(tempImg(:));
+    tempMin(1,b) = min(tempImg(:));
 end
 
 RealSenseData.correctedImageStack = correctedImgStack;
-RealSenseData.caxis = [minVal maxVal];
+RealSenseData.caxis = [mean(tempMin) mean(tempMax)];
 
 end

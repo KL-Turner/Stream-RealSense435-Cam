@@ -26,28 +26,31 @@ numFramesToAcquire = trialDuration*defaultSamplingRate;
 %% Acquire data - Run for set number of desired minutes. 5 minute increments
 for a = 1:numTrials
     currentTime = strrep(strrep(strrep(string(datetime), ' ', '_'), ':', '_'), '-', '_');
-    fileID = join([currentTime '_RealSenseData.mat'], '');
+    fileID = join([currentTime '_RawRealSenseData.mat'], '');
     disp(['Acquiring RealSense camera video for ' num2str(trialDuration) ' seconds. FileID: ' fileID]); disp(' ')
-    [RealSenseData] = AcquireRealSenseVideo(numFramesToAcquire);
-    save(fileID, 'RealSenseData', '-v7.3')
+    [RawRealSenseData] = AcquireRealSenseVideo(numFramesToAcquire);
+    save(fileID, 'RawRealSenseData', '-v7.3')
 end
 disp('RealSense camera streaming - complete'); disp(' ')
 
 %% Create .avi movies from the raw rgb data
-completedDataFiles = ls('*RealSenseData.mat');
-for b = 1:size(completedDataFiles, 1)
-    load(completedDataFiles(b, :))
-    disp(['Generating .avi file (' num2str(b) '/' num2str(size(completedDataFiles,1)) '): ' completedDataFiles(b,:)]); disp(' ')
-    ConvertRealSenseToAVI(RealSenseData, completedDataFiles(b,:), defaultSamplingRate, 'raw');
+realsenseDirectory = dir('*RawRealSenseData.mat');
+realsenseFiles = {realsenseDirectory.name}';
+realsenseFiles = char(realsenseFiles);
+for b = 1:size(realsenseFiles, 1)
+    load(realsenseFiles(b, :))
+    disp(['Generating .avi file (' num2str(b) '/' num2str(size(realsenseFiles,1)) '): ' realsenseFiles(b,:)]); disp(' ')
+    ConvertRealSenseToAVI(RawRealSenseData, realsenseFiles(b,:), defaultSamplingRate, 'raw');
 end
 disp('RealSense raw avi movie creation - complete'); disp(' ')
 
 %% Process the raw camera frames, create .avi movie from processed data
-for c = 1:size(completedDataFiles, 1)
-    load(completedDataFiles(c,:));
-    [RealSenseData] = CorrectRealSenseFrames(RealSenseData);
-    ConvertRealSenseToAVI(RealSenseData, completedDataFiles(c,:), defaultSamplingRate, 'proc');
-    save(fileID, 'RealSenseData', '-v7.3')
+for c = 1:size(realsenseFiles, 1)
+    realsenseFile = realsenseFiles(c,:);
+    load(realsenseFile);
+    [ProcRealSenseData] = CorrectRealSenseFrames(RawRealSenseData);
+    ConvertRealSenseToAVI(ProcRealSenseData, realsenseFiles(c,:), defaultSamplingRate, 'proc');
+    save([realsenseFile(1:end - 17) 'ProcRealSenseData.mat'], 'ProcRealSenseData', '-v7.3')
 end
 
 end

@@ -39,7 +39,8 @@ elseif strcmp(inputType, 'proc')
         open(outputVideo);
         for b = 1:length(RealSenseData.correctedImageStack)
             imagesc(RealSenseData.correctedImageStack(:,:,b));
-            colormap hsv
+            colormap jet
+            caxis(RealSenseData.caxis)
             currentFrame = getframe;
             writeVideo(outputVideo, currentFrame);
         end
