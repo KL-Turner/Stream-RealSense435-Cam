@@ -32,9 +32,9 @@ if strcmp(inputType, 'raw')
         disp([fileName(1:end - 17) 'RawMovie_5xSpeed.avi already exists. Continuing...']); disp(' ')
     end
 elseif strcmp(inputType, 'proc')
-    if ~exist([fileName(1:end - 17) 'ProcMovie_5xSpeed.avi'], 'file')
+    if ~exist([fileName(1:end - 20) 'ProcMovie_5xSpeed.avi'], 'file')
         disp('Generating movie (sped-up 5X)...'); disp(' ')
-        outputVideo = VideoWriter([fileName(1:end - 17) 'ProcMovie_5xSpeed.avi']);
+        outputVideo = VideoWriter([fileName(1:end - 20) 'ProcMovie_5xSpeed.avi']);
         outputVideo.FrameRate = defaultSamplingRate*5;
         open(outputVideo);
         for b = 1:length(RealSenseData.correctedImageStack)
@@ -47,7 +47,7 @@ elseif strcmp(inputType, 'proc')
         close(outputVideo)
         disp('Movie complete'); disp(' ')
     else
-        disp([fileName(1:end - 17) 'ProcMovie_5xSpeed.avi already exists. Continuing...']); disp(' ')
+        disp([fileName(1:end - 20) 'ProcMovie_5xSpeed.avi already exists. Continuing...']); disp(' ')
     end
 end
 

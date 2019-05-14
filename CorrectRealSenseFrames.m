@@ -31,7 +31,6 @@ RealSenseData.correctedImageStack = correctedImgStack;
 
 disp('Determining proper caxis scaling...'); disp(' ')
 for b = 1:length(imgStack)
-    clear tempImg tempMax tempMin
     tempImg = correctedImgStack(:,:,b);
     tempMax(1,b) = max(tempImg(:));
     tempMin(1,b) = min(tempImg(:));
