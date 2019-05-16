@@ -1,4 +1,4 @@
-function [ProcRealSenseData] = CorrectRealSenseFrames(RawRealSenseData)
+function [RealSenseData] = CorrectRealSenseFrames(RealSenseData)
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -12,11 +12,11 @@ function [ProcRealSenseData] = CorrectRealSenseFrames(RawRealSenseData)
 %
 %   Outputs: 
 %
-%   Last Revised: 
+%   Last Revised: May 12th, 2019
 %________________________________________________________________________________________________________________________
 
 %% Fill image holes with interpolated values, outside -> in
-realsenseFrames = RawRealSenseData.depthMap;
+realsenseFrames = RealSenseData.depthMap;
 allImgs = cell(length(realsenseFrames), 1);
 for a = 1:length(realsenseFrames)
     disp(['Filling image holes... (' num2str(a) '/' num2str(length(realsenseFrames)) ')']); disp(' ') 
@@ -29,26 +29,28 @@ end
 holeImgStack = cat(3, allImgs{:});
 
 %% Kalman filter
-disp('Running image stack though Kalman filter...'); disp(' ')
-kalmanImgStack = Kalman_Stack_Filter(holeImgStack, 0.75, 0.75);
+disp('Running image stack though Kalman filter'); disp(' ')
+correctedImgStack = Kalman_Stack_Filter(holeImgStack, 0.75, 0.75);
+kalmanImgStack;
 
-%% Mean subtract background image
-pixelMeans = mean(kalmanImgStack, 3);
-for b = 1:length(kalmanImgStack)
-    disp(['Mean subtracking and removing background image... (' num2str(b) '/' num2str(length(realsenseFrames)) ')']); disp(' ') 
-    meansubImgStack(:,:,b) = kalmanImgStack(:,:,b) - pixelMeans;
+pixelMeans = mean(correctedImgStack, 3);
+for b = 1:length(holeImgStack)
+    disp('Mean subtracking and removing the background noise
+    finalImgStack(:,:,b) = correctedImgStack(:,:,b) - pixelMeans;
 end
+
+% mean subtract
+% set all below a thershold to zero
+% overlay original image pixels
 
 disp('Determining proper caxis scaling...'); disp(' ')
 for c = 1:length(holeImgStack)
-    tempImg = meansubImgStack(:,:,c);
+    tempImg = finalImgStack(:,:,c);
     tempMax(1,c) = max(tempImg(:));
     tempMin(1,c) = min(tempImg(:));
 end
 
-ProcRealSenseData.procImgStack = meansubImgStack;
-ProcRealSenseData.caxis = [mean(tempMin) mean(tempMax)];
+RealSenseData.correctedImageStack = finalImgStack;
+RealSenseData.caxis = [mean(tempMin) mean(tempMax)];
 
 end
-
-% BW = imbinarize(Kmedian,'adaptive','ForegroundPolarity','dark','Sensitivity',0.4);
