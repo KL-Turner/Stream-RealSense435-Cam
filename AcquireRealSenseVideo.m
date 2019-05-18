@@ -37,21 +37,25 @@ while frameCount < numFramesToAcquire
     depth = aligned_frames.get_depth_frame();
     color = colorizer.colorize(depth);
     colordata = color.get_data();
+    trueColor = fs.get_color_frame();
+    colorData = trueColor.get_data();
+    colorImg = permute(reshape(colorData',[3,trueColor.get_width(),trueColor.get_height()]),[3 2 1]);
 
     % Create colorized image, save to struct with current frametime
     img = permute(reshape(colordata',[3,color.get_width(),color.get_height()]),[3 2 1]);
     frameTime = clock;
     RS_RawData.frameTime{frameCount,1} = frameTime;
-    RS_RawData.colorizedData{frameCount,1} = img;
-    imshow(img)
-    
+    RS_RawData.colorImg{frameCount,1} = img;
+    RS_RawData.irImg{frameCount,1} = colorImg;
+
     % Extract accurate depth information, save to struct
     depthSensor = devID.first('depth_sensor');
     depthScale = depthSensor.get_depth_scale();
     depthWidth = depth.get_width();
     depthHeight = depth.get_height();
     depthVector = depth.get_data();
-    RS_RawData.depthMap{frameCount,1} = double(transpose(reshape(depthVector, [depthWidth, depthHeight]))).*depthScale;
+    RS_RawData.depthImg{frameCount,1} = double(transpose(reshape(depthVector, [depthWidth, depthHeight]))).*depthScale;
+    imshow(img)
 end
 pipe.stop();
 
