@@ -1,4 +1,4 @@
-function StreamRealSenseCam
+function [] = StreamRealSenseCam()
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -12,7 +12,7 @@ function StreamRealSenseCam
 %
 %   Outputs: 
 %
-%   Last Revised: May 12th, 2019
+%   Last Revised:
 %________________________________________________________________________________________________________________________
 
 clear
@@ -26,31 +26,26 @@ numFramesToAcquire = trialDuration*defaultSamplingRate;
 %% Acquire data - Run for set number of desired minutes. 5 minute increments
 for a = 1:numTrials
     currentTime = strrep(strrep(strrep(string(datetime), ' ', '_'), ':', '_'), '-', '_');
-    fileID = join([currentTime '_RawRealSenseData.mat'], '');
+    fileID = join([currentTime '_RS_RawData.mat'], '');
     disp(['Acquiring RealSense camera video for ' num2str(trialDuration) ' seconds. FileID: ' fileID]); disp(' ')
-    [RawRealSenseData] = AcquireRealSenseVideo(numFramesToAcquire);
-    save(fileID, 'RawRealSenseData', '-v7.3')
+    [RS_RawData] = AcquireRealSenseVideo(numFramesToAcquire);
+    RS_RawData.numFrames = numFramesToAcquire;
+    RS_RawData.trialDuration = trialDuration;
+    RS_RawData.samplingRate = defaultSamplingRate;
+    disp(['Saving ' fileID '...']); disp(' ')
+    save(fileID, 'RS_RawData', '-v7.3')
 end
 disp('RealSense camera streaming - complete'); disp(' ')
 
 %% Create .avi movies from the raw rgb data
-rawRealSenseDirectory = dir('*RawRealSenseData.mat');
-rawRealSenseFiles = {rawRealSenseDirectory.name}';
-rawRealSenseFiles = char(rawRealSenseFiles);
-for b = 1:size(rawRealSenseFiles, 1)
-    load(rawRealSenseFiles(b, :))
-    disp(['Generating .avi file (' num2str(b) '/' num2str(size(rawRealSenseFiles,1)) '): ' rawRealSenseFiles(b,:)]); disp(' ')
-    ConvertRealSenseToAVI(RawRealSenseData, rawRealSenseFiles(b,:), defaultSamplingRate, 'raw');
+rsRawDataDirectory = dir('*RS_RawData.mat');
+rsRawDataFiles = {rsRawDataDirectory.name}';
+rsRawDataFiles = char(rsRawDataFiles);
+for b = 1:size(rsRawDataFiles, 1)
+    load(rsRawDataFiles(b, :))
+    disp(['Generating .avi file (' num2str(b) '/' num2str(size(rsRawDataFiles,1)) '): ' rsRawDataFiles(b,:)]); disp(' ')
+    ConvertRealSenseToAVI(RS_RawData, rsRawDataFiles(b,:), 'raw');
 end
 disp('RealSense raw avi movie creation - complete'); disp(' ')
-
-%% Process the raw camera frames, create .avi movie from processed data
-for c = 1:size(rawRealSenseFiles, 1)
-    realsenseFile = rawRealSenseFiles(c,:);
-    load(realsenseFile);
-    [ProcRealSenseData] = CorrectRealSenseFrames(RawRealSenseData);
-    ConvertRealSenseToAVI(ProcRealSenseData, rawRealSenseFiles(c,:), defaultSamplingRate, 'proc');
-    save([realsenseFile(1:end - 20) 'ProcRealSenseData.mat'], 'ProcRealSenseData', '-v7.3')
-end
 
 end

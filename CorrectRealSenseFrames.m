@@ -1,4 +1,4 @@
-function [ProcRealSenseData] = CorrectRealSenseFrames(RawRealSenseData)
+function [RS_ProcData, ROIs] = CorrectRealSenseFrames(RS_RawData, ROIs)
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -16,7 +16,7 @@ function [ProcRealSenseData] = CorrectRealSenseFrames(RawRealSenseData)
 %________________________________________________________________________________________________________________________
 
 %% Fill image holes with interpolated values, outside -> in
-realsenseFrames = RawRealSenseData.depthMap;
+realsenseFrames = RS_RawData.depthMap;
 allImgs = cell(length(realsenseFrames), 1);
 for a = 1:length(realsenseFrames)
     disp(['Filling image holes... (' num2str(a) '/' num2str(length(realsenseFrames)) ')']); disp(' ') 
@@ -28,27 +28,66 @@ for a = 1:length(realsenseFrames)
 end
 holeImgStack = cat(3, allImgs{:});
 
+%% Create cage image mask
+disp('Creating image mask...'); disp(' ')
+figure;
+shell = zeros(size(zeroIndeces));
+imagesc(shell)
+hold on;
+axis off
+mask = rectangle('Position', ROIs.cage, 'Curvature', 0.25, 'FaceColor', 'white', 'EdgeColor', 'white'); %#ok<NASGU>
+frame = getframe(gca);
+maskImg = frame2im(frame);
+greyImg = rgb2gray(maskImg);
+resizedGreyImg = imresize(greyImg,[480 640]);
+ROIs.binCageImg = imbinarize(resizedGreyImg);
+close(gcf)
+
+%% Overlay cage mask on each frame
+maskImgStack = zeros(size(holeImgStack, 1), size(holeImgStack, 2), size(holeImgStack, 3));
+for b = 1:size(holeImgStack, 3)
+    disp(['Overlaying cage ROI mask on image... (' num2str(b) '/' num2str(length(holeImgStack)) ')']); disp(' ') 
+    maskImgStack(:,:,b) = holeImgStack(:,:,b).*ROIs.binCageImg;
+end
+clear holeImgStack
+
 %% Kalman filter
 disp('Running image stack though Kalman filter...'); disp(' ')
-kalmanImgStack = Kalman_Stack_Filter(holeImgStack, 0.75, 0.75);
+kalmanImgStack = Kalman_Stack_Filter(maskImgStack, 0.75, 0.75);
+clear maskImgStack
 
 %% Mean subtract background image
 pixelMeans = mean(kalmanImgStack, 3);
-for b = 1:length(kalmanImgStack)
-    disp(['Mean subtracking and removing background image... (' num2str(b) '/' num2str(length(realsenseFrames)) ')']); disp(' ') 
-    meansubImgStack(:,:,b) = kalmanImgStack(:,:,b) - pixelMeans;
+meansubImgStack = zeros(size(kalmanImgStack, 1), size(kalmanImgStack, 2), size(kalmanImgStack, 3));
+for c = 1:size(kalmanImgStack, 3)
+    disp(['Mean subtracking to remove background from image... (' num2str(c) '/' num2str(length(kalmanImgStack)) ')']); disp(' ') 
+    meansubImgStack(:,:,c) = kalmanImgStack(:,:,c) - pixelMeans;
+end
+clear kalmanImgStack
+
+%% Set remaining pixels above threshold = to zero
+threshImgStack = zeros(size(meansubImgStack, 1), size(meansubImgStack, 2), size(meansubImgStack, 3));
+for d = 1:size(meansubImgStack, 3)
+    disp(['Setting pixels greater than zero back to zero... (' num2str(d) '/' num2str(length(meansubImgStack)) ')']); disp(' ') 
+    tempImg = meansubImgStack(:,:,d);
+    threshIndeces = tempImg > 0;
+    tempImg(threshIndeces) = 0;
+    threshImgStack(:,:,d) = tempImg;
 end
 
 disp('Determining proper caxis scaling...'); disp(' ')
-for c = 1:length(holeImgStack)
-    tempImg = meansubImgStack(:,:,c);
+tempMax = zeros(1, size(threshImgStack, 3));
+tempMin = zeros(1, size(threshImgStack, 3));
+for c = 1:length(threshImgStack)
+    tempImg = threshImgStack(:,:,c);
     tempMax(1,c) = max(tempImg(:));
     tempMin(1,c) = min(tempImg(:));
 end
 
-ProcRealSenseData.procImgStack = meansubImgStack;
-ProcRealSenseData.caxis = [mean(tempMin) mean(tempMax)];
+RS_ProcData.procImgStack = threshImgStack;
+RS_ProcData.caxis = [mean(tempMin) mean(tempMax)];
+RS_ProcData.numFrames = RS_RawData.numFrames;
+RS_ProcData.trialDuration = RS_RawData.trialDuration;
+RS_ProcData.samplingRate = RS_RawData.samplingRate;
 
 end
-
-% BW = imbinarize(Kmedian,'adaptive','ForegroundPolarity','dark','Sensitivity',0.4);

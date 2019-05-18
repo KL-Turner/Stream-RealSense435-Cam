@@ -1,4 +1,4 @@
-function [RealSenseData] = AcquireRealSenseVideo(numFramesToAcquire)
+function [RS_RawData] = AcquireRealSenseVideo(numFramesToAcquire)
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -12,7 +12,7 @@ function [RealSenseData] = AcquireRealSenseVideo(numFramesToAcquire)
 %
 %   Outputs: 
 %
-%   Last Revised: May 12th, 2019
+%   Last Revised: 
 %________________________________________________________________________________________________________________________
 
 % Setup RealSense camera
@@ -41,8 +41,8 @@ while frameCount < numFramesToAcquire
     % Create colorized image, save to struct with current frametime
     img = permute(reshape(colordata',[3,color.get_width(),color.get_height()]),[3 2 1]);
     frameTime = clock;
-    RealSenseData.frameTime{frameCount,1} = frameTime;
-    RealSenseData.colorizedData{frameCount,1} = img;
+    RS_RawData.frameTime{frameCount,1} = frameTime;
+    RS_RawData.colorizedData{frameCount,1} = img;
     imshow(img)
     
     % Extract accurate depth information, save to struct
@@ -51,7 +51,7 @@ while frameCount < numFramesToAcquire
     depthWidth = depth.get_width();
     depthHeight = depth.get_height();
     depthVector = depth.get_data();
-    RealSenseData.depthMap{frameCount,1} = double(transpose(reshape(depthVector, [depthWidth, depthHeight]))).*depthScale;
+    RS_RawData.depthMap{frameCount,1} = double(transpose(reshape(depthVector, [depthWidth, depthHeight]))).*depthScale;
 end
 pipe.stop();
 
