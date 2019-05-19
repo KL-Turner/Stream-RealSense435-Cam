@@ -1,4 +1,4 @@
-function [RS_FinalData] = FinishRealSenseFrames(RS_RawData, RS_ProcData)
+function [RS_FullyProcDepthStack] = FinishRealSenseFrames(RS_TrueDepthStack, RS_HalfProcDepthStack)
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -16,13 +16,14 @@ function [RS_FinalData] = FinishRealSenseFrames(RS_RawData, RS_ProcData)
 %________________________________________________________________________________________________________________________
 
 %% Process the image stack in binary
-procImgStack = RS_ProcData.procImgStack;
-clear RS_ProcData
-rawImgStack = RS_RawData.depthMap;
-RS_FinalData.numFrames = RS_RawData.numFrames;
-RS_FinalData.trialDuration = RS_RawData.trialDuration;
-RS_FinalData.samplingRate = RS_RawData.samplingRate;
-clear RS_RawData
+procImgStack = RS_HalfProcDepthStack.halfProcDepthStack;
+clear RS_HalfProcDepthStack
+rawImgStack = RS_TrueDepthStack.trueDepthStack;
+RS_FullyProcDepthStack.frameTime = RS_TrueDepthStack.frameTime;
+RS_FullyProcDepthStack.numFrames = RS_TrueDepthStack.numFrames;
+RS_FullyProcDepthStack.trialDuration = RS_TrueDepthStack.trialDuration;
+RS_FullyProcDepthStack.samplingRate = RS_TrueDepthStack.samplingRate;
+clear RS_TrueDepthStack
 binImgStack = zeros(size(procImgStack, 1), size(procImgStack, 2), size(procImgStack, 3));
 for a = 1:size(procImgStack, 3)
     disp(['Converting to grayscale and binarizing image... (' num2str(a) '/' num2str(length(procImgStack)) ')']); disp(' ') 
@@ -42,6 +43,8 @@ for b = 1:length(rawImgStack)
     allImgs{b,1} = regionfill(image, zeroIndeces);
 end
 holeImgStack = cat(3, allImgs{:});
+clear rawImgStack
+clear allImgs
 
 disp('Determining proper caxis scaling...'); disp(' ')
 tempMax = zeros(1, size(holeImgStack, 3));
@@ -59,6 +62,7 @@ for d = 1:size(binImgStack, 3)
     depthImg = holeImgStack(:,:,d);
     binDepthStack(:,:,d) = depthImg.*binImgStack(:,:,d);
 end
+clear holeImgStack
 
 %% Set zero pixels to desired colormap height
 finalImgStack = zeros(size(binDepthStack, 1), size(binDepthStack, 2), size(binDepthStack, 3));
@@ -69,8 +73,10 @@ for e = 1:size(binDepthStack, 3)
     tempDepthImg(logical(compImg)) = mean(tempMax);
     finalImgStack(:,:,e) = tempDepthImg;
 end
+clear binImgStack
+clear binDepthStack
 
-RS_FinalData.imgStack = finalImgStack;
-RS_FinalData.caxis = [mean(tempMin) mean(tempMax)];
+RS_FullyProcDepthStack.fullyProcDepthStack = finalImgStack;
+RS_FullyProcDepthStack.caxis = [mean(tempMin) mean(tempMax)];
 
 end

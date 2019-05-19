@@ -1,4 +1,4 @@
-function [ROIs] = DrawAnalysisROIs(RS_RawData)
+function [ROIs] = DrawAnalysisROIs(RS_ColorizedDepthStack)
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -16,7 +16,7 @@ function [ROIs] = DrawAnalysisROIs(RS_RawData)
 %________________________________________________________________________________________________________________________
 
 %% Mouse region of interest
-frame = RS_RawData.colorizedDepthImg{1,1};
+frame = RS_ColorizedDepthStack.colorizedDepthStack{1,1};
 yString = 'y';
 theInput = 'n';
 while strcmp(yString, theInput) ~= 1

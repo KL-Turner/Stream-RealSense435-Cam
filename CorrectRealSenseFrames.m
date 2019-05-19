@@ -1,4 +1,4 @@
-function [RS_ProcData, ROIs] = CorrectRealSenseFrames(RS_RawData, ROIs)
+function [RS_HalfProcDepthStack, ROIs] = CorrectRealSenseFrames(RS_TrueDepthStack, ROIs)
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -16,7 +16,7 @@ function [RS_ProcData, ROIs] = CorrectRealSenseFrames(RS_RawData, ROIs)
 %________________________________________________________________________________________________________________________
 
 %% Fill image holes with interpolated values, outside -> in
-realsenseFrames = RS_RawData.depthMap;
+realsenseFrames = RS_TrueDepthStack.trueDepthStack;
 allImgs = cell(length(realsenseFrames), 1);
 for a = 1:length(realsenseFrames)
     disp(['Filling image holes... (' num2str(a) '/' num2str(length(realsenseFrames)) ')']); disp(' ') 
@@ -84,10 +84,11 @@ for c = 1:length(threshImgStack)
     tempMin(1,c) = min(tempImg(:));
 end
 
-RS_ProcData.procImgStack = threshImgStack;
-RS_ProcData.caxis = [mean(tempMin) mean(tempMax)];
-RS_ProcData.numFrames = RS_RawData.numFrames;
-RS_ProcData.trialDuration = RS_RawData.trialDuration;
-RS_ProcData.samplingRate = RS_RawData.samplingRate;
+RS_HalfProcDepthStack.halfProcDepthStack = threshImgStack;
+RS_HalfProcDepthStack.caxis = [mean(tempMin) mean(tempMax)];
+RS_HalfProcDepthStack.frameTimes = RS_TrueDepthStack.frameTimes;
+RS_HalfProcDepthStack.numFrames = RS_TrueDepthStack.numFrames;
+RS_HalfProcDepthStack.trialDuration = RS_TrueDepthStack.trialDuration;
+RS_HalfProcDepthStack.samplingRate = RS_TrueDepthStack.samplingRate;
 
 end
