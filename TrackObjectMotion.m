@@ -1,4 +1,4 @@
-)function [] = TrackObjectMotion(ProcRealSenseData)
+function [] = TrackObjectMotion(ProcRealSenseData)
 
 aviFile = uigetfile('*.avi'); 
 videoFileReader = vision.VideoFileReader(aviFile);

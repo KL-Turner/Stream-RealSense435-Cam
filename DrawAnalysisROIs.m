@@ -16,7 +16,7 @@ function [ROIs] = DrawAnalysisROIs(RS_RawData)
 %________________________________________________________________________________________________________________________
 
 %% Mouse region of interest
-frame = RS_RawData.colorizedData{1,1};
+frame = RS_RawData.colorizedDepthImg{1,1};
 yString = 'y';
 theInput = 'n';
 while strcmp(yString, theInput) ~= 1

@@ -36,10 +36,17 @@ for a = 1:size(rsRawDataFiles, 1)
     end
 end
 
-%% Process the raw camera frames, create .avi movie from processed data
+%% Load the raw camera frames, create .avi movies from data
 for b = 1:size(rsRawDataFiles, 1)
     rsRawDataFile = rsRawDataFiles(b,:);
-    disp(['Analyzing RS_RawData file... (' num2str(b) '/' num2str(size(rsRawDataFiles, 1)) ')']); disp(' ')
+    disp(['Creating RS_RawData .AVI file... (' num2str(b) '/' num2str(size(rsRawDataFiles, 1)) ')']); disp(' ')
+    ConvertRealSenseToAVI(rsRawDataFile, 'raw');
+end
+
+%% Process the raw camera frames, create .avi movie from processed data
+for c = 1:size(rsRawDataFiles, 1)
+    rsRawDataFile = rsRawDataFiles(c,:);
+    disp(['Analyzing RS_RawData file... (' num2str(c) '/' num2str(size(rsRawDataFiles, 1)) ')']); disp(' ')
     if ~exist([rsRawDataFile(1:end - 14) 'RS_ProcData.mat'])
         disp(['Processing video from ' rsRawDataFile '...']); disp(' ')
         load(rsRawDataFile);
@@ -54,7 +61,15 @@ for b = 1:size(rsRawDataFiles, 1)
     else
         disp([rsRawDataFile(1:end - 14) 'RS_ProcData.mat already exists. Continuing...']); disp(' ')
     end
-    rsProcDataFile = [rsRawDataFile(1:end - 14) 'RS_ProcData.mat'];
+end
+
+%% Load create .avi movies from halfway-processed data
+rsProcDataDirectory = dir('*RS_ProcData.mat');
+rsProcDataFiles = {rsProcDataDirectory.name}';
+rsProcDataFiles = char(rsProcDataFiles);
+for d = 1:size(rsProcDataFiles, 1)
+    rsProcDataFile = rsProcDataFiles(d,:);
+    disp(['Creating RS_ProcData .AVI file... (' num2str(d) '/' num2str(size(rsProcDataFiles, 1)) ')']); disp(' ')
     ConvertRealSenseToAVI(rsProcDataFile, 'proc');
 end
 
@@ -67,10 +82,10 @@ rsRawDataFiles = char(rsRawDataFiles);
 rsProcDataDirectory = dir('*RS_ProcData.mat');
 rsProcDataFiles = {rsProcDataDirectory.name}';
 rsProcDataFiles = char(rsProcDataFiles);
-for c = 1:size(rsProcDataFiles, 1)
-    rsRawDataFile = rsRawDataFiles(c,:);
-    rsProcDataFile = rsProcDataFiles(c,:);
-    disp(['Analyzing RS_ProcData file... (' num2str(c) '/' num2str(size(rsProcDataFiles, 1)) ')']); disp(' ')
+for e = 1:size(rsProcDataFiles, 1)
+    rsRawDataFile = rsRawDataFiles(e,:);
+    rsProcDataFile = rsProcDataFiles(e,:);
+    disp(['Analyzing RS_ProcData file... (' num2str(e) '/' num2str(size(rsProcDataFiles, 1)) ')']); disp(' ')
     if ~exist([rsProcDataFile(1:end - 15) 'RS_FinalData.mat'])
         disp(['Processing video from ' rsProcDataFile '...']); disp(' ')
         load(rsProcDataFile);
@@ -86,32 +101,21 @@ for c = 1:size(rsProcDataFiles, 1)
     else
         disp([rsProcDataFile(1:end - 15) 'RS_FinalData.mat already exists. Continuing...']); disp(' ')
     end
-    rsFinalDataFile = [rsProcDataFile(1:end - 15) 'RS_FinalData.mat'];
-    ConvertRealSenseToAVI(rsFinalDataFile(c,:), 'final');
 end
 
+%% Load create .avi movies from fully-processed data
+rsFinalDataDirectory = dir('*RS_FinalData.mat');
+rsFinalDataFiles = {rsFinalDataDirectory.name}';
+rsFinalDataFiles = char(rsFinalDataFiles);
+for f = 1:size(rsFinalDataFiles, 1)
+    rsFinalDataFile = rsFinalDataFiles(f,:);
+    disp(['Creating RS_FinalData .AVI file... (' num2str(f) '/' num2str(size(rsFinalDataFiles, 1)) ')']); disp(' ')
+    ConvertRealSenseToAVI(rsFinalDataFile, 'final');
+end
 
 %% Track object motion in video
+% [] = TrackObjectMotion()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+disp('RealSense movie analysis - complete'); disp(' ')
 
 end

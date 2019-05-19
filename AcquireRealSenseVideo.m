@@ -18,44 +18,59 @@ function [RS_RawData] = AcquireRealSenseVideo(numFramesToAcquire)
 % Setup RealSense camera
 pipe = realsense.pipeline();
 colorizer = realsense.colorizer();
-profile = pipe.start();
 align_to = realsense.stream.color;
 alignedFs = realsense.align(align_to);
-devID = profile.get_device();
 
+profile = pipe.start();
+devID = profile.get_device();
+camName = devID.get_info(realsense.camera_info.name);
+
+% Pre-allocate image size and number of frames
+RS_RawData.cameraID = camName;
+imgMatSize = zeros(480, 640);
+frameLength = cell(numFramesToAcquire, 1);
+for a = 1:length(frameLength)
+    frameLength{a, 1} = imgMatSize;
+end
+RS_RawData.rgbImg = frameLength;
+RS_RawData.colorizedDepthImg = frameLength;
+RS_RawData.depthImg = frameLength;
+    
 % Allow camera to warm up for a few frames
-for i = 1:15
-    pipe.wait_for_frames();    
+for b = 1:15
+    pipe.wait_for_frames();
 end
 
 frameCount = 0;
 while frameCount < numFramesToAcquire
+    frameTime = clock;
+    RS_RawData.frameTime{frameCount, 1} = frameTime;
+
     % Acquire frame, align, and get colorized data
     frameCount = frameCount + 1;
     fs = pipe.wait_for_frames();
-    aligned_frames = alignedFs.process(fs);
-    depth = aligned_frames.get_depth_frame();
-    color = colorizer.colorize(depth);
-    colordata = color.get_data();
-    trueColor = fs.get_color_frame();
-    colorData = trueColor.get_data();
-    colorImg = permute(reshape(colorData',[3,trueColor.get_width(),trueColor.get_height()]),[3 2 1]);
+    alignedFrames = alignedFs.process(fs);
+    
+    % True color rgb image
+    rgbFrame = fs.get_color_frame();
+    rgbData = rgbFrame.get_data();
+    RS_RawData.rgbImg{frameCount, 1} = permute(reshape(rgbData',[3, rgbFrame.get_width(), rgbFrame.get_height()]), [3 2 1]);
 
-    % Create colorized image, save to struct with current frametime
-    img = permute(reshape(colordata',[3,color.get_width(),color.get_height()]),[3 2 1]);
-    frameTime = clock;
-    RS_RawData.frameTime{frameCount,1} = frameTime;
-    RS_RawData.colorImg{frameCount,1} = img;
-    RS_RawData.irImg{frameCount,1} = colorImg;
-
-    % Extract accurate depth information, save to struct
+    % Pseudo-colorized depth image
+    depthFrame = alignedFrames.get_depth_frame();
+    depthColor = colorizer.colorize(depthFrame);
+    depthData = depthColor.get_data();
+    colorizedDepthImg = permute(reshape(depthData',[3, depthColor.get_width(), depthColor.get_height()]), [3 2 1]);
+    imshow(colorizedDepthImg)
+    RS_RawData.colorizedDepthImg{frameCount, 1} = colorizedDepthImg;
+    
+    % Accurate depth information, no auto-scaling of color
     depthSensor = devID.first('depth_sensor');
     depthScale = depthSensor.get_depth_scale();
-    depthWidth = depth.get_width();
-    depthHeight = depth.get_height();
-    depthVector = depth.get_data();
-    RS_RawData.depthImg{frameCount,1} = double(transpose(reshape(depthVector, [depthWidth, depthHeight]))).*depthScale;
-    imshow(img)
+    depthWidth = depthFrame.get_width();
+    depthHeight = depthFrame.get_height();
+    depthVector = depthFrame.get_data();
+    RS_RawData.depthImg{frameCount, 1} = double(transpose(reshape(depthVector, [depthWidth, depthHeight]))).*depthScale;
 end
 pipe.stop();
 
