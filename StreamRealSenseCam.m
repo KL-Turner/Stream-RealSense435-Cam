@@ -47,14 +47,29 @@ end
 %% Acquire data - Run for set number of desired minutes. 5 minute increments
 for a = 1:numTrials
     currentTime = strrep(strrep(strrep(string(datetime), ' ', '_'), ':', '_'), '-', '_');
-    fileID = join([currentTime '_RS_RawData.mat'], '');
+    fileID1 = join(['RealSense_' currentTime '_ColorizedDepthStack.mat'], '');
+    fileID2 = join(['RealSense_' currentTime '_RGBStack.mat'], '');
+    fileID3 = join(['RealSense_' currentTime '_TrueDepthStack.mat'], '');
     disp('Acquiring RealSense D435 camera video...'); disp(' ')
-    [RS_RawData] = AcquireRealSenseVideo(numFramesToAcquire);
-    RS_RawData.numFrames = numFramesToAcquire;
-    RS_RawData.trialDuration = trialDuration;
-    RS_RawData.samplingRate = defaultSamplingRate;
-    disp(['Saving ' fileID '...']); disp(' ')
-    save(fileID, 'RS_RawData', '-v7.3')
+    [RS_ColorizedDepthStack, RS_RGBStack, RS_TrueDepthStack] = AcquireRealSenseVideo(numFramesToAcquire);
+    
+    RS_ColorizedDepthStack.numFrames = numFramesToAcquire;
+    RS_ColorizedDepthStack.trialDuration = trialDuration;
+    RS_ColorizedDepthStack.samplingRate = defaultSamplingRate;
+    disp(['Saving ' fileID1 '...']); disp(' ')
+    save(fileID1, 'RS_ColorizedDepthStack', '-v7.3')
+    
+    RS_RGBStack.numFrames = numFramesToAcquire;
+    RS_RGBStack.trialDuration = trialDuration;
+    RS_RGBStack.samplingRate = defaultSamplingRate;
+    disp(['Saving ' fileID2 '...']); disp(' ')
+    save(fileID2, 'RS_RGBStack', '-v7.3')
+    
+    RS_TrueDepthStack.numFrames = numFramesToAcquire;
+    RS_TrueDepthStack.trialDuration = trialDuration;
+    RS_TrueDepthStack.samplingRate = defaultSamplingRate;
+    disp(['Saving ' fileID3 '...']); disp(' ')
+    save(fileID3, 'RS_TrueDepthStack', '-v7.3')
 end
 disp('RealSense camera streaming - complete'); disp(' ')
 close all
