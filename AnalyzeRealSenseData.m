@@ -118,9 +118,16 @@ for g = 1:size(rsFullyProcDepthStackFiles, 1)
     ConvertRealSenseToAVI(rsFullyProcDepthStackFile, 'FullyProcDepthStack');
 end
 
+%% Track object height
+for h = 1:size(rsFullyProcDepthStackFiles, 1)
+    rsFullyProcDepthStackFile = rsFullyProcDepthStackFiles(h,:);
+    disp(['Tracking mouse height in fully-processed depth stack... (' num2str(h) '/' num2str(size(rsFullyProcDepthStackFiles, 1)) ')']); disp(' ')
+    TrackObjectHeight(rsFullyProcDepthStackFile);
+end
+
 %% Track object motion in video
 % [] = TrackObjectMotion()
-
+close all
 disp('RealSense movie analysis - complete'); disp(' ')
 
 end

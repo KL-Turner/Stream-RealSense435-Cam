@@ -86,7 +86,7 @@ end
 
 RS_HalfProcDepthStack.halfProcDepthStack = threshImgStack;
 RS_HalfProcDepthStack.caxis = [mean(tempMin) mean(tempMax)];
-RS_HalfProcDepthStack.frameTimes = RS_TrueDepthStack.frameTimes;
+RS_HalfProcDepthStack.frameTimes = RS_TrueDepthStack.frameTime;
 RS_HalfProcDepthStack.numFrames = RS_TrueDepthStack.numFrames;
 RS_HalfProcDepthStack.trialDuration = RS_TrueDepthStack.trialDuration;
 RS_HalfProcDepthStack.samplingRate = RS_TrueDepthStack.samplingRate;
