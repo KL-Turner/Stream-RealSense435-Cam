@@ -58,22 +58,22 @@ for a = 1:numTrials
     RS_ColorizedDepthStack.numFrames = numFramesToAcquire;
     RS_ColorizedDepthStack.trialDuration = trialDuration;
     RS_ColorizedDepthStack.samplingRate = defaultSamplingRate;
-    disp(['Saving ' fileID1 '...']); disp(' ')
     savePath1 = join([filePath '\' fileID1], '');
+    disp(['Saving ' savePath1 '...']); disp(' ')
     save(savePath1, 'RS_ColorizedDepthStack', '-v7.3')
     
     RS_RGBStack.numFrames = numFramesToAcquire;
     RS_RGBStack.trialDuration = trialDuration;
     RS_RGBStack.samplingRate = defaultSamplingRate;
-    disp(['Saving ' fileID2 '...']); disp(' ')
     savePath2 = join([filePath '\' fileID2], '');
+    disp(['Saving ' savePath2 '...']); disp(' ')
     save(savePath2, 'RS_ColorizedDepthStack', '-v7.3')
     
     RS_TrueDepthStack.numFrames = numFramesToAcquire;
     RS_TrueDepthStack.trialDuration = trialDuration;
     RS_TrueDepthStack.samplingRate = defaultSamplingRate;
-    disp(['Saving ' fileID3 '...']); disp(' ')
     savePath3 = join([filePath '\' fileID3], '');
+    disp(['Saving ' savePath3 '...']); disp(' ')
     save(savePath3, 'RS_ColorizedDepthStack', '-v7.3')
     
 end
