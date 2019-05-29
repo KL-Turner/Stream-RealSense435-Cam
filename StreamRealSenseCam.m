@@ -48,6 +48,7 @@ end
 
 %% Acquire data - Run for set number of desired minutes. 5 minute increments
 for a = 1:numTrials
+    disp(['Streaming trial number ' num2str(a) ' of ' num2str(size(numTrials,1))]); disp(' ')
     currentTime = strrep(strrep(strrep(string(datetime), ' ', '_'), ':', '_'), '-', '_');
     fileID1 = join(['RealSense_' currentTime '_ColorizedDepthStack.mat'], '');
     fileID2 = join(['RealSense_' currentTime '_RGBStack.mat'], '');
@@ -59,22 +60,22 @@ for a = 1:numTrials
     RS_ColorizedDepthStack.trialDuration = trialDuration;
     RS_ColorizedDepthStack.samplingRate = defaultSamplingRate;
     savePath1 = join([filePath '\' fileID1], '');
-    disp(['Saving ' savePath1 '...']); disp(' ')
+    disp('Saving colorized depth stack...'); disp(' ')
     save(savePath1, 'RS_ColorizedDepthStack', '-v7.3')
     
     RS_RGBStack.numFrames = numFramesToAcquire;
     RS_RGBStack.trialDuration = trialDuration;
     RS_RGBStack.samplingRate = defaultSamplingRate;
     savePath2 = join([filePath '\' fileID2], '');
-    disp(['Saving ' savePath2 '...']); disp(' ')
-    save(savePath2, 'RS_ColorizedDepthStack', '-v7.3')
+    disp('Saving RGB stack...'); disp(' ')
+    save(savePath2, 'RS_RGBStack', '-v7.3')
     
     RS_TrueDepthStack.numFrames = numFramesToAcquire;
     RS_TrueDepthStack.trialDuration = trialDuration;
     RS_TrueDepthStack.samplingRate = defaultSamplingRate;
     savePath3 = join([filePath '\' fileID3], '');
-    disp(['Saving ' savePath3 '...']); disp(' ')
-    save(savePath3, 'RS_ColorizedDepthStack', '-v7.3')
+    disp('Saving true depth stack...'); disp(' ')
+    save(savePath3, 'RS_TrueDepthStack', '-v7.3')
     
 end
 disp('RealSense camera streaming - complete'); disp(' ')
