@@ -22,6 +22,7 @@ numTrials = ceil(minInput/5);
 trialDuration = 5*60;
 defaultSamplingRate = 15;
 numFramesToAcquire = trialDuration*defaultSamplingRate;
+disp('Select or create the folder to save the data'); disp(' ')
 filePath = uigetdir(cd, 'Select or create the folder to save the data');
 
 %% Confirm camera alignment
@@ -58,19 +59,23 @@ for a = 1:numTrials
     RS_ColorizedDepthStack.trialDuration = trialDuration;
     RS_ColorizedDepthStack.samplingRate = defaultSamplingRate;
     disp(['Saving ' fileID1 '...']); disp(' ')
-    save([filePath '\' fileID1], 'RS_ColorizedDepthStack', '-v7.3')
+    savePath1 = join([filePath '\' fileID1], '');
+    save(savePath1, 'RS_ColorizedDepthStack', '-v7.3')
     
     RS_RGBStack.numFrames = numFramesToAcquire;
     RS_RGBStack.trialDuration = trialDuration;
     RS_RGBStack.samplingRate = defaultSamplingRate;
     disp(['Saving ' fileID2 '...']); disp(' ')
-    save([filePath '\' fileID2], 'RS_RGBStack', '-v7.3')
+    savePath2 = join([filePath '\' fileID2], '');
+    save(savePath2, 'RS_ColorizedDepthStack', '-v7.3')
     
     RS_TrueDepthStack.numFrames = numFramesToAcquire;
     RS_TrueDepthStack.trialDuration = trialDuration;
     RS_TrueDepthStack.samplingRate = defaultSamplingRate;
     disp(['Saving ' fileID3 '...']); disp(' ')
-    save([filePath '\' fileID3], 'RS_TrueDepthStack', '-v7.3')
+    savePath3 = join([filePath '\' fileID3], '');
+    save(savePath3, 'RS_ColorizedDepthStack', '-v7.3')
+    
 end
 disp('RealSense camera streaming - complete'); disp(' ')
 close all

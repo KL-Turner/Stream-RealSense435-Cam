@@ -46,13 +46,13 @@ end
 
 frameCount = 0;
 while frameCount < numFramesToAcquire
+    frameCount = frameCount + 1;
     frameTime = clock;
     RS_ColorizedDepthStack.frameTime{frameCount, 1} = frameTime;
     RS_RGBStack.frameTime{frameCount, 1} = frameTime;
     RS_TrueDepthStack.frameTime{frameCount, 1} = frameTime;
 
     % Acquire frame, align, and get colorized data
-    frameCount = frameCount + 1;
     fs = pipe.wait_for_frames();
     alignedFrames = alignedFs.process(fs);
     
