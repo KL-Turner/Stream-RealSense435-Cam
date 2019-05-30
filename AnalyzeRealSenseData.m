@@ -18,9 +18,9 @@ function [] = AnalyzeRealSenseData()
 clear
 clc
 
-rsColorizedDepthStackDirectory = dir('*ColorizedDepthStack.mat');
-rsColorizedDepthStackFiles = {rsColorizedDepthStackDirectory.name}';
-rsColorizedDepthStackFiles = char(rsColorizedDepthStackFiles);
+% rsColorizedDepthStackDirectory = dir('*ColorizedDepthStack.mat');
+% rsColorizedDepthStackFiles = {rsColorizedDepthStackDirectory.name}';
+% rsColorizedDepthStackFiles = char(rsColorizedDepthStackFiles);
 
 rsRGBStackDirectory = dir('*RGBStack.mat');
 rsRGBStackFiles = {rsRGBStackDirectory.name}';
@@ -32,25 +32,25 @@ rsTrueDepthStackFiles = char(rsTrueDepthStackFiles);
 
 %% Draw ROIs for motion tracking
 disp('Verifying that ROIs exist for each day...'); disp(' ')
-for a = 1:size(rsColorizedDepthStackFiles, 1)
-    rsColorizedDepthStackFile = rsColorizedDepthStackFiles(a,:);
-    delimiters = strfind(rsColorizedDepthStackFile, '_');
-    date = rsColorizedDepthStackFile(1:delimiters(4) - 1);
+for a = 1:size(rsTrueDepthStackFiles, 1)
+    rsTrueDepthStackFile = rsTrueDepthStackFiles(a,:);
+    delimiters = strfind(rsTrueDepthStackFile, '_');
+    date = rsTrueDepthStackFile(1:delimiters(4) - 1);
     roiFile = [date '_ROIs.mat'];
     if ~exist(roiFile)
-        disp(['Loading ' rsColorizedDepthStackFile '...']); disp(' ')
-        load(rsColorizedDepthStackFile)
-        [ROIs] = DrawAnalysisROIs(RS_ColorizedDepthStack);
+        disp(['Loading ' rsTrueDepthStackFile '...']); disp(' ')
+        load(rsTrueDepthStackFile)
+        [ROIs] = DrawAnalysisROIs(RS_TrueDepthStack);
         save(roiFile, 'ROIs')
     end
 end
 
 %% Load the colorized depth stack camera frames, create .avi movies from data
-for b = 1:size(rsColorizedDepthStackFiles, 1)
-    rsColorizedDepthStackFile = rsColorizedDepthStackFiles(b,:);
-    disp(['Creating ColorizedDepthStack .AVI files... (' num2str(b) '/' num2str(size(rsColorizedDepthStackFiles, 1)) ')']); disp(' ')
-    ConvertRealSenseToAVI(rsColorizedDepthStackFile, 'ColorizedDepthStack');
-end
+% for b = 1:size(rsColorizedDepthStackFiles, 1)
+%     rsColorizedDepthStackFile = rsColorizedDepthStackFiles(b,:);
+%     disp(['Creating ColorizedDepthStack .AVI files... (' num2str(b) '/' num2str(size(rsColorizedDepthStackFiles, 1)) ')']); disp(' ')
+%     ConvertRealSenseToAVI(rsColorizedDepthStackFile, 'ColorizedDepthStack');
+% end
 
 %% Load the RGB stack camera frames, create .avi movies from data
 for c = 1:size(rsRGBStackFiles, 1)

@@ -67,7 +67,7 @@ while frameCount < numFramesToAcquire
     depthData = depthColor.get_data();
     colorizedDepthImg = permute(reshape(depthData',[3, depthColor.get_width(), depthColor.get_height()]), [3 2 1]);
     imshow(colorizedDepthImg)
-    RS_ColorizedDepthStack.colorizedDepthStack{frameCount, 1} = colorizedDepthImg;
+%     RS_ColorizedDepthStack.colorizedDepthStack{frameCount, 1} = colorizedDepthImg;
     
     % Accurate depth information, no auto-scaling of color
     depthSensor = devID.first('depth_sensor');
