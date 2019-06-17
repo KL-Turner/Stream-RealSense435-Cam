@@ -46,7 +46,7 @@ end
 
 frameCount = 0;
 while frameCount < numFramesToAcquire
-    disp(['Frame count: ' num2str(frameCount)]); disp(' ')
+%     disp(['Frame count: ' num2str(frameCount)]); disp(' ')
     frameCount = frameCount + 1;
     frameTime = clock;
     RS_ColorizedDepthStack.frameTime{frameCount, 1} = frameTime;
@@ -67,7 +67,7 @@ while frameCount < numFramesToAcquire
     depthColor = colorizer.colorize(depthFrame);
     depthData = depthColor.get_data();
     colorizedDepthImg = permute(reshape(depthData',[3, depthColor.get_width(), depthColor.get_height()]), [3 2 1]);
-    imshow(colorizedDepthImg)
+%     imshow(colorizedDepthImg)
 %     RS_ColorizedDepthStack.colorizedDepthStack{frameCount, 1} = colorizedDepthImg;
     
     % Accurate depth information, no auto-scaling of color

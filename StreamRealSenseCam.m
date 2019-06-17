@@ -19,7 +19,7 @@ clear
 clc
 minInput = input('How many minutes would you like to stream for? (Increments of 5): '); disp(' ')
 numTrials = ceil(minInput/5);
-trialDuration = 5*60;
+trialDuration = 20*60;
 defaultSamplingRate = 15;
 numFramesToAcquire = trialDuration*defaultSamplingRate;
 disp('Select or create the folder to save the data:'); disp(' ')
