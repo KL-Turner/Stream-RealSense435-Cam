@@ -46,6 +46,7 @@ end
 
 frameCount = 0;
 while frameCount < numFramesToAcquire
+    disp(['Frame count: ' num2str(frameCount)]); disp(' ')
     frameCount = frameCount + 1;
     frameTime = clock;
     RS_ColorizedDepthStack.frameTime{frameCount, 1} = frameTime;

@@ -44,9 +44,9 @@ end
 
 %% Acquire data - Run for set number of desired minutes. 5 minute increments
 for a = 1:numTrials
-    disp(['Streaming trial number ' num2str(a) ' of ' num2str(size(numTrials,1))]); disp(' ')
+    disp(['Streaming trial number ' num2str(a) ' of ' num2str(numTrials)]); disp(' ')
     currentTime = strrep(strrep(strrep(string(datetime), ' ', '_'), ':', '_'), '-', '_');
-    fileID1 = join(['RealSense_' currentTime '_ColorizedDepthStack.mat'], '');
+%     fileID1 = join(['RealSense_' currentTime '_ColorizedDepthStack.mat'], '');
     fileID2 = join(['RealSense_' currentTime '_RGBStack.mat'], '');
     fileID3 = join(['RealSense_' currentTime '_TrueDepthStack.mat'], '');
     disp('Acquiring RealSense D435 camera video...'); disp(' ')
