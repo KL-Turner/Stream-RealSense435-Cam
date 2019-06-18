@@ -44,7 +44,7 @@ for b = 1:15
     pipe.wait_for_frames();
 end
 
-%% Verify camera stream
+%% Preview camera stream
 testFrameCount = 0;
 while testFrameCount < 100
     testFrameCount = testFrameCount + 1;
@@ -59,12 +59,6 @@ while testFrameCount < 100
     depthData = depthColor.get_data();
     colorizedDepthImg = permute(reshape(depthData',[3, depthColor.get_width(), depthColor.get_height()]), [3 2 1]);
     imshow(colorizedDepthImg)
-end
-
-%% Confirm depth stream
-theInput = input('Is the depth stream valid? (y/n): ', 's'); disp(' ')
-if strcmp(theInput, 'n')
-    return;
 end
 
 %% Acquire data stream
