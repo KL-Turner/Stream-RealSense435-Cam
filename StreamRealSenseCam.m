@@ -53,18 +53,18 @@ for a = 1:numTrials
     RS_RGBStack.samplingRate = defaultSamplingRate;
     savePath1 = join([filePath '\' fileID1], '');
     disp('Saving RGB stack...'); disp(' ')
-    multiWaitbar_RealSense('Saving RGB Image Stack', 'Busy', 'Color', [0.2 0.9 0.3])
+    multiWaitbar_RealSense('Saving RGB Image Stack', 'Busy', 'Color', [0.2 0.9 0.3]);
     save(savePath1, 'RS_RGBStack', '-v7.3')
-    multiWaitbar_RealSense('Saving RGB Image Stack', 'Close')
+    multiWaitbar_RealSense('Saving RGB Image Stack', 'Close');
  
     RS_TrueDepthStack.numFrames = numFramesToAcquire;
     RS_TrueDepthStack.trialDuration = trialDuration;
     RS_TrueDepthStack.samplingRate = defaultSamplingRate;
     savePath2 = join([filePath '\' fileID2], '');
     disp('Saving depth stack...'); disp(' ')
-    multiWaitbar_RealSense('Saving Depth Stack', 'Busy', 'Color', [0.8 0.4 0.9])
+    multiWaitbar_RealSense('Saving Depth Stack', 'Busy', 'Color', [0.8 0.4 0.9]);
     save(savePath2, 'RS_TrueDepthStack', '-v7.3')
-    multiWaitbar_RealSense('Saving Depth Stack', 'Close')
+    multiWaitbar_RealSense('Saving Depth Stack', 'Close');
     
 end
 disp('RealSense camera streaming - complete'); disp(' ')

@@ -89,6 +89,7 @@ while frameCount < numFramesToAcquire
 end
 pipe.stop();
 elapsedTime = toc;
+multiWaitbar_RealSense('Streaming RealSense Camera', 'Close');
 timeDifference = elapsedTime - trialDuration;
 disp(['Elapsed time is ' num2str(elapsedTime) ' seconds.']); disp(' ')
 disp(['This is ' num2str(timeDifference) ' seconds off from optimal']); disp(' ')
