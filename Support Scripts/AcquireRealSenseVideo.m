@@ -35,7 +35,6 @@ frameLength = cell(numFramesToAcquire, 1);
 for a = 1:length(frameLength)
     frameLength{a, 1} = imgMatSize;
 end
-RS_ColorizedDepthStack.colorizedDepthStack = frameLength;
 RS_RGBStack.RGBStack = frameLength;
 RS_TrueDepthStack.trueDepthStack = frameLength;
     
@@ -46,7 +45,7 @@ end
 
 %% Preview camera stream
 testFrameCount = 0;
-while testFrameCount < 100
+while testFrameCount < 60
     testFrameCount = testFrameCount + 1;
 
     % Acquire frame, align, and get colorized data
@@ -60,6 +59,7 @@ while testFrameCount < 100
     colorizedDepthImg = permute(reshape(depthData',[3, depthColor.get_width(), depthColor.get_height()]), [3 2 1]);
     imshow(colorizedDepthImg)
 end
+close all
 
 %% Acquire data stream
 frameCount = 0;
