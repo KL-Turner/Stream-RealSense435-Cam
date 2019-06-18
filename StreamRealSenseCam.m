@@ -1,4 +1,3 @@
-function [] = StreamRealSenseCam()
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -76,5 +75,3 @@ for a = 1:numTrials
 end
 disp('RealSense camera streaming - complete'); disp(' ')
 close all
-
-end
