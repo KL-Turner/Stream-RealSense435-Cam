@@ -1,4 +1,4 @@
-function [RS_ColorizedDepthStack, RS_RGBStack, RS_TrueDepthStack] = AcquireRealSenseVideo(numFramesToAcquire)
+function [RS_RGBStack, RS_TrueDepthStack] = AcquireRealSenseVideo(numFramesToAcquire, trialDuration)
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -44,32 +44,47 @@ for b = 1:15
     pipe.wait_for_frames();
 end
 
+%% Verify camera stream
+testFrameCount = 0;
+while testFrameCount < 100
+    testFrameCount = testFrameCount + 1;
+
+    % Acquire frame, align, and get colorized data
+    fs = pipe.wait_for_frames();
+    alignedFrames = alignedFs.process(fs);
+    
+    % Pseudo-colorized depth image
+    depthFrame = alignedFrames.get_depth_frame();
+    depthColor = colorizer.colorize(depthFrame);
+    depthData = depthColor.get_data();
+    colorizedDepthImg = permute(reshape(depthData',[3, depthColor.get_width(), depthColor.get_height()]), [3 2 1]);
+    imshow(colorizedDepthImg)
+end
+
+%% Confirm depth stream
+theInput = input('Is the depth stream valid? (y/n): ', 's'); disp(' ')
+if strcmp(theInput, 'n')
+    return;
+end
+
+%% Acquire data stream
 frameCount = 0;
+tic;
 while frameCount < numFramesToAcquire
-%     disp(['Frame count: ' num2str(frameCount)]); disp(' ')
+    multiWaitbar_RealSense('Streaming RealSense Camera', 'Busy', 'Color', [0.1 0.5 0.8]);
     frameCount = frameCount + 1;
     frameTime = clock;
-    RS_ColorizedDepthStack.frameTime{frameCount, 1} = frameTime;
     RS_RGBStack.frameTime{frameCount, 1} = frameTime;
     RS_TrueDepthStack.frameTime{frameCount, 1} = frameTime;
 
     % Acquire frame, align, and get colorized data
     fs = pipe.wait_for_frames();
-    alignedFrames = alignedFs.process(fs);
     
     % True color rgb image
     rgbFrame = fs.get_color_frame();
     rgbData = rgbFrame.get_data();
     RS_RGBStack.RGBStack{frameCount, 1} = permute(reshape(rgbData',[3, rgbFrame.get_width(), rgbFrame.get_height()]), [3 2 1]);
 
-    % Pseudo-colorized depth image
-    depthFrame = alignedFrames.get_depth_frame();
-    depthColor = colorizer.colorize(depthFrame);
-    depthData = depthColor.get_data();
-    colorizedDepthImg = permute(reshape(depthData',[3, depthColor.get_width(), depthColor.get_height()]), [3 2 1]);
-%     imshow(colorizedDepthImg)
-%     RS_ColorizedDepthStack.colorizedDepthStack{frameCount, 1} = colorizedDepthImg;
-    
     % Accurate depth information, no auto-scaling of color
     depthSensor = devID.first('depth_sensor');
     depthScale = depthSensor.get_depth_scale();
@@ -79,5 +94,9 @@ while frameCount < numFramesToAcquire
     RS_TrueDepthStack.trueDepthStack{frameCount, 1} = double(transpose(reshape(depthVector, [depthWidth, depthHeight]))).*depthScale;
 end
 pipe.stop();
+elapsedTime = toc;
+timeDifference = elapsedTime - trialDuration;
+disp(['Elapsed time is ' num2str(elapsedTime) ' seconds.']); disp(' ')
+disp(['This is ' num2str(timeDifference) ' seconds off from optimal']); disp(' ')
 
 end
