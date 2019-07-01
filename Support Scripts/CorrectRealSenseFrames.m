@@ -27,6 +27,7 @@ for a = 1:length(realsenseFrames)
     allImgs{a,1} = regionfill(image, zeroIndeces);
 end
 holeImgStack = cat(3, allImgs{:});
+save('HoleImgStack.mat', 'holeImgStack', '-v7.3')
 
 %% Create cage image mask
 disp('Creating image mask...'); disp(' ')
