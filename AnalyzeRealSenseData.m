@@ -54,12 +54,14 @@ for c = 1:size(rsTrueDepthStackFiles, 1)
     disp(['Processing TrueDepthStack file... (' num2str(c) '/' num2str(size(rsTrueDepthStackFiles, 1)) ')']); disp(' ')
     if ~exist([rsTrueDepthStackFile(1:end - 19) '_HalfProcDepthStack.mat'], 'file')
         disp(['Processing video from ' rsTrueDepthStackFile '...']); disp(' ')
-        load(rsTrueDepthStackFile);
         delimiters = strfind(rsTrueDepthStackFile, '_');
         date = rsTrueDepthStackFile(1:delimiters(4) - 1);
         roiFile = [date '_ROIs.mat'];
-        load(roiFile)
-        [RS_HalfProcDepthStack, ROIs] = CorrectRealSenseFrames(RS_TrueDepthStack, ROIs);
+        CorrectRealSenseFrames(rsTrueDepthStackFile);
+        CorrectRealSenseFrames_ImageMask(rsTrueDepthStackFile)
+        CorrectRealSenseFrames_KalmanFilter(rsTrueDepthStackFile)
+        CorrectRealSenseFrames_MeanSub(rsTrueDepthStackFile)
+        CorrectRealSenseFrames_Theshold(rsTrueDepthStackFile)
         disp(['Saving ' rsTrueDepthStackFile(1:end - 19) '_HalfProcDepthStack.mat...']); disp(' ')
         save(roiFile, 'ROIs')
         save([rsTrueDepthStackFile(1:end - 19) '_HalfProcDepthStack.mat'], 'RS_HalfProcDepthStack', '-v7.3')
