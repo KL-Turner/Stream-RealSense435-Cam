@@ -1,4 +1,4 @@
-function CorrectRealSenseFrames_ImageMask(rsTrueDepthStackFile)
+function CorrectRealSenseFrames_ImageMask(rsTrueDepthStackFile, roiFile, zeroIndeces)
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -17,6 +17,7 @@ function CorrectRealSenseFrames_ImageMask(rsTrueDepthStackFile)
 
 holeImgStackFile = [rsTrueDepthStackFile(1:end - 19) '_PatchedHoles.mat'];
 load(holeImgStackFile)
+load(roiFile)
 
 %% Create cage image mask
 disp('Creating image mask...'); disp(' ')
@@ -40,6 +41,7 @@ for b = 1:size(holeImgStack, 3)
     imgMaskStack(:,:,b) = holeImgStack(:,:,b).*ROIs.binCageImg;
 end
 save([rsTrueDepthStackFile(1:end - 19) '_ImageMask.mat'], 'imgMaskStack', '-v7.3')
+save('roiFile', 'ROIs')
 
 end
 
