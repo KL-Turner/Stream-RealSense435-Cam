@@ -15,7 +15,8 @@ function [zeroIndeces] = CorrectRealSenseFrames_PatchHoles(rsTrueDepthStackFile)
 %   Last Revised: 
 %________________________________________________________________________________________________________________________
 
-if ~exist(rsTrueDepthStackFile, 'file')
+disp('CorrectRealSenseFrame: Patch Holes'); disp(' ')
+if ~exist([rsTrueDepthStackFile(1:end - 19) '_PatchedHoles.mat'], 'file')
     load(rsTrueDepthStackFile)
 
     %% Fill image holes with interpolated values, outside -> in
@@ -31,5 +32,8 @@ if ~exist(rsTrueDepthStackFile, 'file')
     end
     holeImgStack = cat(3, allImgs{:});
     save([rsTrueDepthStackFile(1:end - 19) '_PatchedHoles.mat'], 'holeImgStack', '-v7.3')
+else
+    disp([rsTrueDepthStackFile(1:end - 19) '_PatchedHoles.mat already exists. Continuing...']); disp(' ')
+end
 
 end

@@ -15,11 +15,16 @@ function CorrectRealSenseFrames_KalmanFilter(rsTrueDepthStackFile)
 %   Last Revised:
 %________________________________________________________________________________________________________________________
 
-imgMaskStackFile = [rsTrueDepthStackFile(1:end - 19) '_ImageMask.mat'];
-load(imgMaskStackFile)
-
-%% Kalman filter
-kalmanImgStack = Kalman_Stack_Filter(maskImgStack, 0.75, 0.75);
-save([rsTrueDepthStackFile(1:end - 19) '_Kalman.mat'], 'kalmanImgStack', '-v7.3')
+disp('CorrectRealSenseFrame: Kalman Filter'); disp(' ')
+if ~exist([rsTrueDepthStackFile(1:end - 19) '_Kalman.mat'], 'file')
+    imgMaskStackFile = [rsTrueDepthStackFile(1:end - 19) '_ImageMask.mat'];
+    load(imgMaskStackFile)
+    
+    %% Kalman filter
+    kalmanImgStack = Kalman_Stack_Filter(maskImgStack, 0.75, 0.75);
+    save([rsTrueDepthStackFile(1:end - 19) '_Kalman.mat'], 'kalmanImgStack', '-v7.3')
+else
+    disp([rsTrueDepthStackFile(1:end - 19) '_Kalman.mat already exists. Continuing...']); disp(' ')
+end
 
 end
