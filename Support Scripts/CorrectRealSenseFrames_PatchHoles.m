@@ -15,7 +15,7 @@ function CorrectRealSenseFrames_PatchHoles(rsTrueDepthStackFile, roiFile)
 %   Last Revised: 
 %________________________________________________________________________________________________________________________
 
-disp('CorrectRealSenseFrame: Patch Holes'); disp(' ')
+disp('CorrectRealSenseFrames: Patch Holes'); disp(' ')
 if ~exist([rsTrueDepthStackFile(1:end - 19) '_PatchedHoles.mat'], 'file')
     load(rsTrueDepthStackFile)
     load(roiFile)

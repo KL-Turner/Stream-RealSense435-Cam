@@ -15,7 +15,7 @@ function CorrectRealSenseFrames_MeanSub(rsTrueDepthStackFile)
 %   Last Revised:
 %________________________________________________________________________________________________________________________
 
-disp('CorrectRealSenseFrame: Mean Subtraction'); disp(' ')
+disp('CorrectRealSenseFrames: Mean Subtraction'); disp(' ')
 if ~exist([rsTrueDepthStackFile(1:end - 19) '_MeanSub.mat'], 'file')
     kalmanStackFile = [rsTrueDepthStackFile(1:end - 19) '_Kalman.mat'];
     load(kalmanStackFile)
@@ -27,7 +27,7 @@ if ~exist([rsTrueDepthStackFile(1:end - 19) '_MeanSub.mat'], 'file')
         disp(['Mean subtracking to remove background from image... (' num2str(c) '/' num2str(length(kalmanImgStack)) ')']); disp(' ')
         meanSubImgStack(:,:,c) = kalmanImgStack(:,:,c) - pixelMeans;
     end
-    save([[rsTrueDepthStackFile(1:end - 19) '_MeanSub.mat'], 'meanSubImgStack', '-v7.3')
+    save([rsTrueDepthStackFile(1:end - 19) '_MeanSub.mat'], 'meanSubImgStack', '-v7.3')
 else
     disp([rsTrueDepthStackFile(1:end - 19) '_MeanSub.mat already exists. Continuing...']); disp(' ')
 end

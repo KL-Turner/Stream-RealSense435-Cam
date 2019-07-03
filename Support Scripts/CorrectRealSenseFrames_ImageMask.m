@@ -15,7 +15,7 @@ function CorrectRealSenseFrames_ImageMask(rsTrueDepthStackFile, roiFile)
 %   Last Revised:
 %________________________________________________________________________________________________________________________
 
-disp('CorrectRealSenseFrame: Image Mask'); disp(' ')
+disp('CorrectRealSenseFrames: Image Mask'); disp(' ')
 if ~exist([rsTrueDepthStackFile(1:end - 19) '_ImageMask.mat'], 'file')
     holeImgStackFile = [rsTrueDepthStackFile(1:end - 19) '_PatchedHoles.mat'];
     load(holeImgStackFile)
@@ -28,7 +28,6 @@ if ~exist([rsTrueDepthStackFile(1:end - 19) '_ImageMask.mat'], 'file')
         imgMaskStack(:,:,b) = holeImgStack(:,:,b).*ROIs.binCageImg;
     end
     save([rsTrueDepthStackFile(1:end - 19) '_ImageMask.mat'], 'imgMaskStack', '-v7.3')
-    save('roiFile', 'ROIs')
 else
     disp([rsTrueDepthStackFile(1:end - 19) '_ImageMask.mat already exists. Continuing...']); disp(' ')
 end

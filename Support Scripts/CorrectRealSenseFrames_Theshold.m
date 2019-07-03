@@ -15,7 +15,7 @@ function CorrectRealSenseFrames_Theshold(rsTrueDepthStackFile)
 %   Last Revised:
 %________________________________________________________________________________________________________________________
 
-disp('CorrectRealSenseFrame: Threshold'); disp(' ')
+disp('CorrectRealSenseFrames: Threshold'); disp(' ')
 if ~exist([rsTrueDepthStackFile(1:end - 19) '_Threshold.mat'], 'file')
     
     meanSubStackFile = [rsTrueDepthStackFile(1:end - 19) '_MeanSub.mat'];
