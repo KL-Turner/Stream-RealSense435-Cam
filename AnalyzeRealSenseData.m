@@ -57,8 +57,8 @@ for c = 1:size(rsTrueDepthStackFiles, 1)
         delimiters = strfind(rsTrueDepthStackFile, '_');
         date = rsTrueDepthStackFile(1:delimiters(4) - 1);
         roiFile = [date '_ROIs.mat'];
-        [zeroIndeces] = CorrectRealSenseFrames_PatchHoles(rsTrueDepthStackFile);
-        CorrectRealSenseFrames_ImageMask(rsTrueDepthStackFile, roiFile, zeroIndeces)
+        CorrectRealSenseFrames_PatchHoles(rsTrueDepthStackFile, roiFile);
+        CorrectRealSenseFrames_ImageMask(rsTrueDepthStackFile, roiFile)
         CorrectRealSenseFrames_KalmanFilter(rsTrueDepthStackFile)
         CorrectRealSenseFrames_MeanSub(rsTrueDepthStackFile)
         CorrectRealSenseFrames_Theshold(rsTrueDepthStackFile)

@@ -1,4 +1,4 @@
-function CorrectRealSenseFrames_ImageMask(rsTrueDepthStackFile, roiFile, zeroIndeces)
+function CorrectRealSenseFrames_ImageMask(rsTrueDepthStackFile, roiFile)
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -20,21 +20,6 @@ if ~exist([rsTrueDepthStackFile(1:end - 19) '_ImageMask.mat'], 'file')
     holeImgStackFile = [rsTrueDepthStackFile(1:end - 19) '_PatchedHoles.mat'];
     load(holeImgStackFile)
     load(roiFile)
-    
-    %% Create cage image mask
-    disp('Creating image mask...'); disp(' ')
-    figure;
-    shell = zeros(size(zeroIndeces));
-    imagesc(shell)
-    hold on;
-    axis off
-    mask = rectangle('Position', ROIs.cage, 'Curvature', 0.25, 'FaceColor', 'white', 'EdgeColor', 'white'); %#ok<NASGU>
-    frame = getframe(gca);
-    maskImg = frame2im(frame);
-    greyImg = rgb2gray(maskImg);
-    resizedGreyImg = imresize(greyImg,[480 640]);
-    ROIs.binCageImg = imbinarize(resizedGreyImg);
-    close(gcf)
     
     %% Overlay cage mask on each frame
     imgMaskStack = zeros(size(holeImgStack, 1), size(holeImgStack, 2), size(holeImgStack, 3));
