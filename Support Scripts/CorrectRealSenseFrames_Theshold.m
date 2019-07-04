@@ -19,7 +19,7 @@ disp('CorrectRealSenseFrames: Threshold'); disp(' ')
 if ~exist([rsTrueDepthStackFile(1:end - 19) '_Threshold.mat'], 'file')
     
     meanSubStackFile = [rsTrueDepthStackFile(1:end - 19) '_MeanSub.mat'];
-    load(meanSubStackFile)
+   load(meanSubStackFile)
     load(rsTrueDepthStackFile)
     
     %% Set remaining pixels above threshold = to zero

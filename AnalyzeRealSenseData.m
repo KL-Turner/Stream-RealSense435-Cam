@@ -33,7 +33,7 @@ for a = 1:size(rsTrueDepthStackFiles, 1)
     delimiters = strfind(rsTrueDepthStackFile, '_');
     date = rsTrueDepthStackFile(1:delimiters(4) - 1);
     roiFile = [date '_ROIs.mat'];
-    if ~exist(roiFile)
+    if ~exist(roiFile, 'file')
         disp(['Loading ' rsTrueDepthStackFile '...']); disp(' ')
         load(rsTrueDepthStackFile)
         [ROIs] = DrawAnalysisROIs(RS_TrueDepthStack);
@@ -83,13 +83,9 @@ for e = 1:size(rsHalfProcDepthStackFiles, 1)
     rsHalfProcDepthStackFile = rsHalfProcDepthStackFiles(e,:);
     rsTrueDepthStackFile = [rsHalfProcDepthStackFile(1:end - 23) '_TrueDepthStack.mat'];
     disp(['Processing halfway-processed depth stack files... (' num2str(e) '/' num2str(size(rsHalfProcDepthStackFiles, 1)) ')']); disp(' ')
-    if ~exist([rsHalfProcDepthStackFile(1:end - 23) '_FullyProcDepthStack.mat'])
+    if ~exist([rsHalfProcDepthStackFile(1:end - 23) '_FullyProcDepthStack.mat'], 'file')
         disp(['Processing video from ' rsHalfProcDepthStackFile '...']); disp(' ')
-        load(rsHalfProcDepthStackFile);
-        load(rsTrueDepthStackFile);
-        [RS_FullyProcDepthStack] = FinishRealSenseFrames(RS_TrueDepthStack, RS_HalfProcDepthStack);
-        disp(['Saving ' rsHalfProcDepthStackFile(1:end - 23) '_FullyProcDepthStack.mat...']); disp(' ')
-        save([rsHalfProcDepthStackFile(1:end - 23) '_FullyProcDepthStack.mat'], 'RS_FullyProcDepthStack', '-v7.3')
+        FinishRealSenseFrames(rsTrueDepthStackFile, rsHalfProcDepthStackFile);
     else
         disp([rsHalfProcDepthStackFile(1:end - 23) '_FullyProcDepthStack.mat already exists. Continuing...']); disp(' ')
     end

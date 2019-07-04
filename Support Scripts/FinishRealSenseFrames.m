@@ -1,4 +1,4 @@
-function [RS_FullyProcDepthStack] = FinishRealSenseFrames(RS_TrueDepthStack, RS_HalfProcDepthStack)
+function [] = FinishRealSenseFrames(rsTrueDepthStackFile, rsHalfProcDepthStackFile)
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -14,6 +14,9 @@ function [RS_FullyProcDepthStack] = FinishRealSenseFrames(RS_TrueDepthStack, RS_
 %
 %   Last Revised: 
 %________________________________________________________________________________________________________________________
+
+load(rsHalfProcDepthStackFile);
+load(rsTrueDepthStackFile);
 
 %% Process the image stack in binary
 procImgStack = RS_HalfProcDepthStack.halfProcDepthStack;
@@ -78,5 +81,8 @@ clear binDepthStack
 
 RS_FullyProcDepthStack.fullyProcDepthStack = finalImgStack;
 RS_FullyProcDepthStack.caxis = [mean(tempMin) mean(tempMax)];
+
+save([rsHalfProcDepthStackFile(1:end - 23) '_FullyProcDepthStack.mat'], 'RS_FullyProcDepthStack', '-v7.3')
+
 
 end
