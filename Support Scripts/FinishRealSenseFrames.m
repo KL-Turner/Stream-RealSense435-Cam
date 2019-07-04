@@ -80,7 +80,6 @@ clear binImgStack
 clear binDepthStack
 
 RS_FullyProcDepthStack.fullyProcDepthStack = finalImgStack;
-RS_FullyProcDepthStack.caxis = [mean(tempMin) mean(tempMax)];
 
 save([rsHalfProcDepthStackFile(1:end - 23) '_FullyProcDepthStack.mat'], 'RS_FullyProcDepthStack', '-v7.3')
 

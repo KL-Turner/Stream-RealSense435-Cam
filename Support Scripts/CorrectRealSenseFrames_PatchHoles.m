@@ -34,6 +34,15 @@ if ~exist([rsTrueDepthStackFile(1:end - 19) '_PatchedHoles.mat'], 'file')
     holeImgStack = cat(3, allImgs{:});
     save([rsTrueDepthStackFile(1:end - 19) '_PatchedHoles.mat'], 'holeImgStack', '-v7.3')
     
+    disp('Determining proper caxis scaling...'); disp(' ')
+    tempMax = zeros(1, size(holeImgStack, 3));
+    tempMin = zeros(1, size(holeImgStack, 3));
+    for c = 1:length(holeImgStack)
+        tempImg = holeImgStack(:,:,c);
+        tempMax(1,c) = max(tempImg(:));
+        ROIs.tempMin(1,c) = min(tempImg(:));
+    end
+    
     %% Create cage image mask
     disp('Creating image mask...'); disp(' ')
     figure;

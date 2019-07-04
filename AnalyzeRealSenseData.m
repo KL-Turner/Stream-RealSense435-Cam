@@ -85,7 +85,7 @@ for e = 1:size(rsHalfProcDepthStackFiles, 1)
     disp(['Processing halfway-processed depth stack files... (' num2str(e) '/' num2str(size(rsHalfProcDepthStackFiles, 1)) ')']); disp(' ')
     if ~exist([rsHalfProcDepthStackFile(1:end - 23) '_FullyProcDepthStack.mat'], 'file')
         disp(['Processing video from ' rsHalfProcDepthStackFile '...']); disp(' ')
-        FinishRealSenseFrames(rsTrueDepthStackFile, rsHalfProcDepthStackFile);
+        CorrectRealSenseFrames_BinImage(rsTrueDepthStackFile)
     else
         disp([rsHalfProcDepthStackFile(1:end - 23) '_FullyProcDepthStack.mat already exists. Continuing...']); disp(' ')
     end
