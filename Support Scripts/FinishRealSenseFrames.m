@@ -20,13 +20,7 @@ load(rsTrueDepthStackFile);
 
 %% Process the image stack in binary
 procImgStack = RS_HalfProcDepthStack.halfProcDepthStack;
-clear RS_HalfProcDepthStack
 rawImgStack = RS_TrueDepthStack.trueDepthStack;
-RS_FullyProcDepthStack.frameTime = RS_TrueDepthStack.frameTime;
-RS_FullyProcDepthStack.numFrames = RS_TrueDepthStack.numFrames;
-RS_FullyProcDepthStack.trialDuration = RS_TrueDepthStack.trialDuration;
-RS_FullyProcDepthStack.samplingRate = RS_TrueDepthStack.samplingRate;
-clear RS_TrueDepthStack
 binImgStack = zeros(size(procImgStack, 1), size(procImgStack, 2), size(procImgStack, 3));
 for a = 1:size(procImgStack, 3)
     disp(['Converting to grayscale and binarizing image... (' num2str(a) '/' num2str(length(procImgStack)) ')']); disp(' ') 

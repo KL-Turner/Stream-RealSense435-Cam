@@ -1,4 +1,3 @@
-function [] = AnalyzeRealSenseData()
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -18,100 +17,78 @@ function [] = AnalyzeRealSenseData()
 clear
 clc
 
-rsRGBStackDirectory = dir('*RGBStack.mat');
-rsRGBStackFiles = {rsRGBStackDirectory.name}';
-rsRGBStackFiles = char(rsRGBStackFiles);
+RGBStackDirectory = dir('*RGBStack.mat');
+RGBStackFiles = {RGBStackDirectory.name}';
+RGBStackFiles = char(RGBStackFiles);
 
-rsTrueDepthStackDirectory = dir('*TrueDepthStack.mat');
-rsTrueDepthStackFiles = {rsTrueDepthStackDirectory.name}';
-rsTrueDepthStackFiles = char(rsTrueDepthStackFiles);
+depthStackDirectory = dir('*TrueDepthStack.mat');
+depthStackFiles = {depthStackDirectory.name}';
+depthStackFiles = char(depthStackFiles);
 
 %% Draw ROIs for motion tracking
 disp('Verifying that ROIs exist for each day...'); disp(' ')
-for a = 1:size(rsTrueDepthStackFiles, 1)
-    rsTrueDepthStackFile = rsTrueDepthStackFiles(a,:);
-    delimiters = strfind(rsTrueDepthStackFile, '_');
-    date = rsTrueDepthStackFile(1:delimiters(4) - 1);
-    roiFile = [date '_ROIs.mat'];
-    if ~exist(roiFile, 'file')
-        disp(['Loading ' rsTrueDepthStackFile '...']); disp(' ')
-        load(rsTrueDepthStackFile)
-        [ROIs] = DrawAnalysisROIs(RS_TrueDepthStack);
-        save(roiFile, 'ROIs')
-    end
-end
-
-%% Load the RGB stack camera frames, create .avi movies from data
-for b = 1:size(rsRGBStackFiles, 1)
-    rsRGBStackFile = rsRGBStackFiles(b,:);
-    disp(['Creating RGB Stack .AVI files... (' num2str(b) '/' num2str(size(rsRGBStackFiles, 1)) ')']); disp(' ')
-    ConvertRealSenseToAVI(rsRGBStackFile, 'RGBStack');
-end
-
-%% Process the true depth stack frames until binarization-based processing
-for c = 1:size(rsTrueDepthStackFiles, 1)
-    rsTrueDepthStackFile = rsTrueDepthStackFiles(c,:);
-    disp(['Processing TrueDepthStack file... (' num2str(c) '/' num2str(size(rsTrueDepthStackFiles, 1)) ')']); disp(' ')
-    if ~exist([rsTrueDepthStackFile(1:end - 19) '_HalfProcDepthStack.mat'], 'file')
-        disp(['Processing video from ' rsTrueDepthStackFile '...']); disp(' ')
-        delimiters = strfind(rsTrueDepthStackFile, '_');
-        date = rsTrueDepthStackFile(1:delimiters(4) - 1);
-        roiFile = [date '_ROIs.mat'];
-        CorrectRealSenseFrames_PatchHoles(rsTrueDepthStackFile, roiFile);
-        CorrectRealSenseFrames_ImageMask(rsTrueDepthStackFile, roiFile)
-        CorrectRealSenseFrames_KalmanFilter(rsTrueDepthStackFile)
-        CorrectRealSenseFrames_MeanSub(rsTrueDepthStackFile)
-        CorrectRealSenseFrames_Theshold(rsTrueDepthStackFile)
+for a = 1:size(depthStackFiles, 1)
+    depthStackFile = depthStackFiles(a,:);
+    delimiters = strfind(depthStackFile, '_');
+    date = depthStackFile(1:delimiters(4) - 1);
+    supplementalFile = [date '_SupplementalData.mat'];
+    if ~exist(supplementalFile, 'file')
+        DrawAnalysisROIs(depthStackFile);
     else
-        disp([rsTrueDepthStackFile(1:end - 19) '_HalfProcDepthStack.mat already exists. Continuing...']); disp(' ')
+        disp('Supplemental data file exists. Continuing...'); disp(' ')
     end
 end
 
-rsHalfProcDepthStackDirectory = dir('*HalfProcDepthStack.mat');
-rsHalfProcDepthStackFiles = {rsHalfProcDepthStackDirectory.name}';
-rsHalfProcDepthStackFiles = char(rsHalfProcDepthStackFiles);
-
-%% Load the colorized depth stack camera frames, create .avi movies from data
-for d = 1:size(rsHalfProcDepthStackFiles, 1)
-    rsHalfProcDepthStackFile = rsHalfProcDepthStackFiles(d,:);
-    disp(['Creating halfway-processed depth stack .AVI files... (' num2str(d) '/' num2str(size(rsHalfProcDepthStackFiles, 1)) ')']); disp(' ')
-    ConvertRealSenseToAVI(rsHalfProcDepthStackFile, 'HalfProcDepthStack');
-end
-
-%% Overlay original color onto image mask
-for e = 1:size(rsHalfProcDepthStackFiles, 1)
-    rsHalfProcDepthStackFile = rsHalfProcDepthStackFiles(e,:);
-    rsTrueDepthStackFile = [rsHalfProcDepthStackFile(1:end - 23) '_TrueDepthStack.mat'];
-    disp(['Processing halfway-processed depth stack files... (' num2str(e) '/' num2str(size(rsHalfProcDepthStackFiles, 1)) ')']); disp(' ')
-    if ~exist([rsHalfProcDepthStackFile(1:end - 23) '_FullyProcDepthStack.mat'], 'file')
-        disp(['Processing video from ' rsHalfProcDepthStackFile '...']); disp(' ')
-        FinishRealSenseFrames(rsTrueDepthStackFile, rsHalfProcDepthStackFile);
+%% Process the depth stack frames
+for b = 1:size(depthStackFiles, 1)
+    depthStackFile = depthStackFiles(b,:);
+    disp(['Processing TrueDepthStack file... (' num2str(b) '/' num2str(size(depthStackFiles, 1)) ')']); disp(' ')
+    if ~exist([depthStackFile(1:end - 19) '_ProcDepthStack.mat'], 'file')
+        disp(['Processing video from ' depthStackFile '...']); disp(' ')
+        delimiters = strfind(depthStackFile, '_');
+        date = depthStackFile(1:delimiters(4) - 1);
+        supplementalFile = [date '_SupplementalData.mat'];
+        CorrectRealSenseFrames_PatchHoles(depthStackFile, supplementalFile);
+        CorrectRealSenseFrames_ImageMask(depthStackFile, supplementalFile)
+        CorrectRealSenseFrames_KalmanFilter(depthStackFile)
+        CorrectRealSenseFrames_MeanSub(depthStackFile)
+        CorrectRealSenseFrames_Theshold(depthStackFile)
+        CorrectRealSenseFrames_Binarize(depthStackFile)
+        CorrectRealSenseFrames_BinOverlay1(depthStackFile)
+        CorrectRealSenseFrames_BinOverlay2(depthStackFile)
+        CorrectRealSenseFrames_JoinOverlays(depthStackFile)
+        CorrectRealSenseFrames_ResetDepth(depthStackFile)
     else
-        disp([rsHalfProcDepthStackFile(1:end - 23) '_FullyProcDepthStack.mat already exists. Continuing...']); disp(' ')
+        disp([depthStackFile(1:end - 19) '_ProcDepthStack.mat already exists. Continuing...']); disp(' ')
     end
 end
 
-rsFullyProcDepthStackDirectory = dir('*FullyProcDepthStack.mat');
-rsFullyProcDepthStackFiles = {rsFullyProcDepthStackDirectory.name}';
-rsFullyProcDepthStackFiles = char(rsFullyProcDepthStackFiles);
+procDepthStackDirectory = dir('*ProcDepthStack.mat');
+procDepthStackFiles = {procDepthStackDirectory.name}';
+procDepthStackFiles = char(procDepthStackFiles);
 
-%% Load the fully-processed depth stack camera frames, create .avi movies from data
-for f = 1:size(rsFullyProcDepthStackFiles, 1)
-    rsFullyProcDepthStackFile = rsFullyProcDepthStackFiles(f,:);
-    disp(['Creating fully-processed depth stack .AVI files... (' num2str(f) '/' num2str(size(rsFullyProcDepthStackFiles, 1)) ')']); disp(' ')
-    ConvertRealSenseToAVI(rsFullyProcDepthStackFile, 'FullyProcDepthStack');
-end
-
-%% Track object height
-for g = 1:size(rsFullyProcDepthStackFiles, 1)
-    rsFullyProcDepthStackFile = rsFullyProcDepthStackFiles(g,:);
-    disp(['Tracking mouse height in fully-processed depth stack... (' num2str(g) '/' num2str(size(rsFullyProcDepthStackFiles, 1)) ')']); disp(' ')
-    TrackObjectHeight(rsFullyProcDepthStackFile);
-end
-
-%% Track object motion in video
-% [] = TrackObjectMotion()
-close all
-disp('RealSense movie analysis - complete'); disp(' ')
-
-end
+% %% Load the RGB stack camera frames, create .avi movies from data
+% for c = 1:size(RGBStackFiles, 1)
+%     RGBStackFile = RGBStackFiles(c,:);
+%     disp(['Creating RGB Stack .AVI files... (' num2str(c) '/' num2str(size(RGBStackFiles, 1)) ')']); disp(' ')
+%     ConvertRealSenseToAVI(RGBStackFile, 'RGBStack');
+% end
+% 
+% %% Load the RGB stack camera frames, create .avi movies from data
+% for d = 1:size(procDepthStackFiles, 1)
+%     procDepthStackFile = procDepthStackFiles(d,:);
+%     disp(['Creating Proc Depth Stack Stack .AVI files... (' num2str(d) '/' num2str(size(procDepthStackFiles, 1)) ')']); disp(' ')
+%     ConvertRealSenseToAVI(procDepthStackFile, 'FullyProcDepthStack');
+% end
+% 
+% %% Track object height
+% for g = 1:size(procDepthStackFiles, 1)
+%     rsFullyProcDepthStackFile = procDepthStackFiles(g,:);
+%     disp(['Tracking mouse height in fully-processed depth stack... (' num2str(g) '/' num2str(size(procDepthStackFiles, 1)) ')']); disp(' ')
+%     TrackObjectHeight(rsFullyProcDepthStackFile);
+% end
+% 
+% %% Track object motion in video
+% % [] = TrackObjectMotion()
+% close all
+% disp('RealSense movie analysis - complete'); disp(' ')

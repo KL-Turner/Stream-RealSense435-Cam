@@ -1,4 +1,4 @@
-function CorrectRealSenseFrames_PatchHoles(rsTrueDepthStackFile, roiFile)
+function CorrectRealSenseFrames_PatchHoles(depthStackFile, supplementalFile)
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -16,9 +16,9 @@ function CorrectRealSenseFrames_PatchHoles(rsTrueDepthStackFile, roiFile)
 %________________________________________________________________________________________________________________________
 
 disp('CorrectRealSenseFrames: Patch Holes'); disp(' ')
-if ~exist([rsTrueDepthStackFile(1:end - 19) '_PatchedHoles.mat'], 'file')
-    load(rsTrueDepthStackFile)
-    load(roiFile)
+if ~exist([depthStackFile(1:end - 19) '_PatchedHoles.mat'], 'file')
+    load(depthStackFile)
+    load(supplementalFile)
     
     %% Fill image holes with interpolated values, outside -> in
     realsenseFrames = RS_TrueDepthStack.trueDepthStack;
@@ -32,7 +32,18 @@ if ~exist([rsTrueDepthStackFile(1:end - 19) '_PatchedHoles.mat'], 'file')
         allImgs{a,1} = regionfill(image, zeroIndeces);
     end
     holeImgStack = cat(3, allImgs{:});
-    save([rsTrueDepthStackFile(1:end - 19) '_PatchedHoles.mat'], 'holeImgStack', '-v7.3')
+    save([depthStackFile(1:end - 19) '_PatchedHoles.mat'], 'holeImgStack', '-v7.3')
+    
+    %% Determine caxis scaling final movie
+    disp('Determining proper caxis scaling...'); disp(' ')
+    tempMax = zeros(1, size(holeImgStack, 3));
+    tempMin = zeros(1, size(holeImgStack, 3));
+    for c = 1:length(holeImgStack)
+        tempImg = holeImgStack(:,:,c);
+        tempMax(1,c) = max(tempImg(:));
+        tempMin(1,c) = min(tempImg(:));
+    end
+    SuppData.caxis = [mean(tempMin) mean(tempMax)];
     
     %% Create cage image mask
     disp('Creating image mask...'); disp(' ')
@@ -41,16 +52,17 @@ if ~exist([rsTrueDepthStackFile(1:end - 19) '_PatchedHoles.mat'], 'file')
     imagesc(shell)
     hold on;
     axis off
-    mask = rectangle('Position', ROIs.cage, 'Curvature', 0.25, 'FaceColor', 'white', 'EdgeColor', 'white'); %#ok<NASGU>
+    mask = rectangle('Position', SuppData.cage, 'Curvature', 0.25, 'FaceColor', 'white', 'EdgeColor', 'white'); %#ok<NASGU>
     frame = getframe(gca);
     maskImg = frame2im(frame);
     greyImg = rgb2gray(maskImg);
     resizedGreyImg = imresize(greyImg,[480 640]);
-    ROIs.binCageImg = imbinarize(resizedGreyImg);
+    SuppData.binCageImg = imbinarize(resizedGreyImg);
     close(gcf)
-    save(roiFile, 'ROIs')
+    save(supplementalFile, 'SuppData')
+    
 else
-    disp([rsTrueDepthStackFile(1:end - 19) '_PatchedHoles.mat already exists. Continuing...']); disp(' ')
+    disp([depthStackFile(1:end - 19) '_PatchedHoles.mat already exists. Continuing...']); disp(' ')
 end
 
 end
