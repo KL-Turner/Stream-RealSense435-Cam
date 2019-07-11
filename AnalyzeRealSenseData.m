@@ -39,6 +39,7 @@ for a = 1:size(depthStackFiles, 1)
     end
 end
 
+<<<<<<< HEAD
 %% Process the depth stack frames
 for b = 1:size(depthStackFiles, 1)
     depthStackFile = depthStackFiles(b,:);
@@ -58,6 +59,27 @@ for b = 1:size(depthStackFiles, 1)
         CorrectRealSenseFrames_BinOverlay2(depthStackFile)
         CorrectRealSenseFrames_JoinOverlays(depthStackFile)
         CorrectRealSenseFrames_ResetDepth(depthStackFile)
+=======
+rsHalfProcDepthStackDirectory = dir('*HalfProcDepthStack.mat');
+rsHalfProcDepthStackFiles = {rsHalfProcDepthStackDirectory.name}';
+rsHalfProcDepthStackFiles = char(rsHalfProcDepthStackFiles);
+
+%% Load the colorized depth stack camera frames, create .avi movies from data
+for d = 1:size(rsHalfProcDepthStackFiles, 1)
+    rsHalfProcDepthStackFile = rsHalfProcDepthStackFiles(d,:);
+    disp(['Creating halfway-processed depth stack .AVI files... (' num2str(d) '/' num2str(size(rsHalfProcDepthStackFiles, 1)) ')']); disp(' ')
+    ConvertRealSenseToAVI(rsHalfProcDepthStackFile, 'HalfProcDepthStack');
+end
+
+%% Overlay original color onto image mask
+for e = 1:size(rsHalfProcDepthStackFiles, 1)
+    rsHalfProcDepthStackFile = rsHalfProcDepthStackFiles(e,:);
+    rsTrueDepthStackFile = [rsHalfProcDepthStackFile(1:end - 23) '_TrueDepthStack.mat'];
+    disp(['Processing halfway-processed depth stack files... (' num2str(e) '/' num2str(size(rsHalfProcDepthStackFiles, 1)) ')']); disp(' ')
+    if ~exist([rsHalfProcDepthStackFile(1:end - 23) '_FullyProcDepthStack.mat'], 'file')
+        disp(['Processing video from ' rsHalfProcDepthStackFile '...']); disp(' ')
+        CorrectRealSenseFrames_BinImage(rsTrueDepthStackFile)
+>>>>>>> e69aba516cbe5df6b3a85ba5fc3844141d636922
     else
         disp([depthStackFile(1:end - 19) '_ProcDepthStack.mat already exists. Continuing...']); disp(' ')
     end

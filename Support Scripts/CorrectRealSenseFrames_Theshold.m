@@ -17,7 +17,6 @@ function CorrectRealSenseFrames_Theshold(rsTrueDepthStackFile)
 
 disp('CorrectRealSenseFrames: Threshold'); disp(' ')
 if ~exist([rsTrueDepthStackFile(1:end - 19) '_Threshold.mat'], 'file')
-    
     meanSubStackFile = [rsTrueDepthStackFile(1:end - 19) '_MeanSub.mat'];
     load(meanSubStackFile)
     load(rsTrueDepthStackFile)
@@ -32,6 +31,26 @@ if ~exist([rsTrueDepthStackFile(1:end - 19) '_Threshold.mat'], 'file')
         threshImgStack(:,:,a) = tempImg;
     end
     save([rsTrueDepthStackFile(1:end - 19) '_Threshold.mat'], 'threshImgStack', '-v7.3')
+<<<<<<< HEAD
+=======
+    
+    disp('Determining proper caxis scaling...'); disp(' ')
+    tempMax = zeros(1, size(threshImgStack, 3));
+    tempMin = zeros(1, size(threshImgStack, 3));
+    for c = 1:length(threshImgStack)
+        tempImg = threshImgStack(:,:,c);
+        tempMax(1,c) = max(tempImg(:));
+        tempMin(1,c) = min(tempImg(:));
+    end
+    
+    HalfProcDepthStack.halfProcDepthStack = threshImgStack;
+    HalfProcDepthStack.caxis = [mean(tempMin) mean(tempMax)];
+    HalfProcDepthStack.frameTimes = RS_TrueDepthStack.frameTime;
+    HalfProcDepthStack.numFrames = RS_TrueDepthStack.numFrames;
+    HalfProcDepthStack.trialDuration = RS_TrueDepthStack.trialDuration;
+    HalfProcDepthStack.samplingRate = RS_TrueDepthStack.samplingRate;
+    save([rsTrueDepthStackFile(1:end - 19) '_HalfProcDepthStack.mat'], 'HalfProcDepthStack', '-v7.3')
+>>>>>>> e69aba516cbe5df6b3a85ba5fc3844141d636922
 else
     disp([rsTrueDepthStackFile(1:end - 19) '_Threshold.mat already exists. Continuing...']); disp(' ')
 end
