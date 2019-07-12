@@ -1,4 +1,4 @@
-function CorrectRealSenseFrames_KalmanFilter(rsTrueDepthStackFile)
+function CorrectRealSenseFrames_KalmanFilter(depthStackFile)
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -16,15 +16,15 @@ function CorrectRealSenseFrames_KalmanFilter(rsTrueDepthStackFile)
 %________________________________________________________________________________________________________________________
 
 disp('CorrectRealSenseFrames: Kalman Filter'); disp(' ')
-if ~exist([rsTrueDepthStackFile(1:end - 19) '_Kalman.mat'], 'file')
-    imgMaskStackFile = [rsTrueDepthStackFile(1:end - 19) '_ImageMask.mat'];
+if ~exist([depthStackFile(1:end-21) '_Kalman_' depthStackFile(end-4:end)], 'file')
+    imgMaskStackFile = [depthStackFile(1:end-21) '_ImageMask_' depthStackFile(end-4:end)];
     load(imgMaskStackFile)
     
     %% Kalman filter
-    kalmanImgStack = Kalman_Stack_Filter(imgMaskStack, 0.75, 0.75);
-    save([rsTrueDepthStackFile(1:end - 19) '_Kalman.mat'], 'kalmanImgStack', '-v7.3')
+    kalmanImgStack = Kalman_Stack_Filter(imgMaskStack,0.75,0.75);
+    save([depthStackFile(1:end-21) '_Kalman_' depthStackFile(end-4:end)], 'kalmanImgStack', '-v7.3')
 else
-    disp([rsTrueDepthStackFile(1:end - 19) '_Kalman.mat already exists. Continuing...']); disp(' ')
+    disp([depthStackFile(1:end-21) '_Kalman_' depthStackFile(end-4:end) ' already exists. Continuing...']); disp(' ')
 end
 
 end

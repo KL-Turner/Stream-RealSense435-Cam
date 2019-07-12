@@ -1,4 +1,4 @@
-function CorrectRealSenseFrames_BinOverlay1(depthStackFile)
+function CorrectRealSenseFrames_BinOverlay(depthStackFile)
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -15,24 +15,24 @@ function CorrectRealSenseFrames_BinOverlay1(depthStackFile)
 %   Last Revised:
 %________________________________________________________________________________________________________________________
 
-disp('CorrectRealSenseFrames: Binary Overlay 1'); disp(' ')
-if ~exist([depthStackFile(1:end - 19) '_BinOverlay1.mat'], 'file')
+disp('CorrectRealSenseFrames: Binary Overlay'); disp(' ')
+if ~exist([depthStackFile(1:end-21) '_BinOverlay_' depthStackFile(end-4:end)], 'file')
     
-    binStackFile = [depthStackFile(1:end - 19) '_Binarize.mat'];
+    binStackFile = [depthStackFile(1:end-21) '_Binarize_' depthStackFile(end-4:end)];
     load(binStackFile)
     
-    holeStackFile = [depthStackFile(1:end - 19) '_PatchedHoles.mat'];
+    holeStackFile = [depthStackFile(1:end-21) '_PatchedHoles_' depthStackFile(end-4:end)];
     load(holeStackFile)
     
     %% Overlay the depth image with the processed binary image
-    binOverlayImgStack1 = zeros(size(binImgStack, 1), size(binImgStack, 2), size(binImgStack, 3));
-    for a = 1:floor(size(binImgStack, 3)/2)
+    binOverlayImgStack = zeros(size(binImgStack,1), size(binImgStack,2), size(binImgStack,3));
+    for a = 1:size(binImgStack,3)
         disp(['Overlaying original depth on binarized image... (' num2str(a) '/' num2str(length(binImgStack)) ')']); disp(' ')
-        binOverlayImgStack1(:,:,a) = holeImgStack(:,:,a).*binImgStack(:,:,a);
+        binOverlayImgStack(:,:,a) = holeImgStack(:,:,a).*binImgStack(:,:,a);
     end
-    save([depthStackFile(1:end - 19) '_BinOverlay1.mat'], 'binOverlayImgStack1', '-v7.3')
+    save([depthStackFile(1:end-21) '_BinOverlay_' depthStackFile(end-4:end)], 'binOverlayImgStack', '-v7.3')
 else
-    disp([depthStackFile(1:end - 19) '_BinOverlay1.mat already exists. Continuing...']); disp(' ')
+    disp([depthStackFile(1:end-21) '_BinOverlay_' depthStackFile(end-4:end) ' already exists. Continuing...']); disp(' ')
 end
 
 end

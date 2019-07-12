@@ -16,20 +16,20 @@ function CorrectRealSenseFrames_ImageMask(depthStackFile, supplementalFile)
 %________________________________________________________________________________________________________________________
 
 disp('CorrectRealSenseFrames: Image Mask'); disp(' ')
-if ~exist([depthStackFile(1:end - 19) '_ImageMask.mat'], 'file')
-    holeImgStackFile = [depthStackFile(1:end - 19) '_PatchedHoles.mat'];
+if ~exist([depthStackFile(1:end-21) '_ImageMask_' depthStackFile(end-4:end)], 'file')
+    holeImgStackFile = [depthStackFile(1:end-21) '_PatchedHoles_' depthStackFile(end-4:end)];
     load(holeImgStackFile)
     load(supplementalFile)
     
     %% Overlay cage mask on each frame
-    imgMaskStack = zeros(size(holeImgStack, 1), size(holeImgStack, 2), size(holeImgStack, 3));
-    for b = 1:size(holeImgStack, 3)
+    imgMaskStack = zeros(size(holeImgStack,1), size(holeImgStack,2), size(holeImgStack,3));
+    for b = 1:size(holeImgStack,3)
         disp(['Overlaying cage ROI mask on image... (' num2str(b) '/' num2str(length(holeImgStack)) ')']); disp(' ')
         imgMaskStack(:,:,b) = holeImgStack(:,:,b).*SuppData.binCageImg;
     end
-    save([depthStackFile(1:end - 19) '_ImageMask.mat'], 'imgMaskStack', '-v7.3')
+    save([depthStackFile(1:end-21) '_ImageMask_' depthStackFile(end-4:end)], 'imgMaskStack', '-v7.3')
 else
-    disp([depthStackFile(1:end - 19) '_ImageMask.mat already exists. Continuing...']); disp(' ')
+    disp([depthStackFile(1:end-21) '_ImageMask ' depthStackFile(end-4:end) ' already exists. Continuing...']); disp(' ')
 end
 
 end

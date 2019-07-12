@@ -16,43 +16,35 @@ function CorrectRealSenseFrames_PatchHoles(depthStackFile, supplementalFile)
 %________________________________________________________________________________________________________________________
 
 disp('CorrectRealSenseFrames: Patch Holes'); disp(' ')
-if ~exist([depthStackFile(1:end - 19) '_PatchedHoles.mat'], 'file')
-    load(depthStackFile)
-    load(supplementalFile)
+if ~exist([depthStackFile(1:end-21) '_PatchedHoles_' depthStackFile(end-4:end)], 'file')
+    depthStackStruct = load(depthStackFile);
+    structField = fieldnames(depthStackStruct);
+    depthStack = depthStackStruct.(structField{1,1});
+    load(supplementalFile);
     
     %% Fill image holes with interpolated values, outside -> in
-    realsenseFrames = RS_TrueDepthStack.trueDepthStack;
-    allImgs = cell(length(realsenseFrames), 1);
-    for a = 1:length(realsenseFrames)
-        disp(['Filling image holes... (' num2str(a) '/' num2str(length(realsenseFrames)) ')']); disp(' ') 
-        image = realsenseFrames{a,1};
+    allImgs = cell(length(depthStack),1);
+    for a = 1:length(depthStack)
+        disp(['Filling image holes... (' num2str(a) '/' num2str(length(depthStack)) ')']); disp(' ') 
+        image = depthStack{a,1};
         onesIndeces = image >= 1;
         image(onesIndeces) = 0;
         zeroIndeces = image == 0;
-        allImgs{a,1} = regionfill(image, zeroIndeces);
+        allImgs{a,1} = regionfill(image,zeroIndeces);
     end
-    holeImgStack = cat(3, allImgs{:});
-    save([depthStackFile(1:end - 19) '_PatchedHoles.mat'], 'holeImgStack', '-v7.3')
+    holeImgStack = cat(3,allImgs{:});
+    save([depthStackFile(1:end-21) '_PatchedHoles_' depthStackFile(end-4:end)], 'holeImgStack', '-v7.3')
     
     %% Determine caxis scaling final movie
     disp('Determining proper caxis scaling...'); disp(' ')
-    tempMax = zeros(1, size(holeImgStack, 3));
-    tempMin = zeros(1, size(holeImgStack, 3));
+    tempMax = zeros(1,size(holeImgStack,3));
+    tempMin = zeros(1,size(holeImgStack,3));
     for c = 1:length(holeImgStack)
         tempImg = holeImgStack(:,:,c);
         tempMax(1,c) = max(tempImg(:));
         tempMin(1,c) = min(tempImg(:));
     end
-    SuppData.caxis = [mean(tempMin) mean(tempMax)];
-    
-    disp('Determining proper caxis scaling...'); disp(' ')
-    tempMax = zeros(1, size(holeImgStack, 3));
-    tempMin = zeros(1, size(holeImgStack, 3));
-    for c = 1:length(holeImgStack)
-        tempImg = holeImgStack(:,:,c);
-        tempMax(1,c) = max(tempImg(:));
-        ROIs.tempMin(1,c) = min(tempImg(:));
-    end
+    SuppData.(structField{1,1}).caxis = [mean(tempMin) mean(tempMax)];
     
     %% Create cage image mask
     disp('Creating image mask...'); disp(' ')
@@ -71,7 +63,7 @@ if ~exist([depthStackFile(1:end - 19) '_PatchedHoles.mat'], 'file')
     save(supplementalFile, 'SuppData')
     
 else
-    disp([depthStackFile(1:end - 19) '_PatchedHoles.mat already exists. Continuing...']); disp(' ')
+    disp([depthStackFile(1:end-21) '_PatchedHoles_' depthStackFile(end-4:end) ' already exists. Continuing...']); disp(' ')
 end
 
 end
