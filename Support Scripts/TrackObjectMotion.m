@@ -24,6 +24,13 @@ for a = 1:length(procDepthStack)
     else
         imageA = procDepthStack(a);
         imageB = procDepthStack(a+1);
+        
+        stats = regionprops(yourimage);
+        centroid = stats.centroid;
+        
+        [y, x] = ndgrid(1:size(yourimage, 1), 1:size(yourimage, 2));
+        centroid = mean([x(logical(yourimage)), y(logical(yourimage))]);
+        
         centA = centroid(imageA);
         centB = centroid(imageB);
         X = [centB, centA];
