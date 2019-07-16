@@ -25,8 +25,7 @@ if ~exist([depthStackFile(1:end-21) '_Binarize_' depthStackFile(end-4:end)], 'fi
     binImgStack = zeros(size(threshImgStack,1), size(threshImgStack,2), size(threshImgStack,3));
     for a = 1:size(threshImgStack,3)
         disp(['Converting to grayscale and binarizing image... (' num2str(a) '/' num2str(size(threshImgStack,3)) ')']); disp(' ')
-        T = adaptthresh(mat2gray(threshImgStack(:,:,a)), 'ForegroundPolarity', 'dark');
-        binImgStack(:,:,a) = imfill(bwareaopen(imcomplement(imbinarize(mat2gray(threshImgStack(:,:,a)),T)),1500), 'holes');
+        binImgStack(:,:,a) = imfill(bwareaopen(imcomplement(imbinarize(mat2gray(threshImgStack(:,:,a)))),1500), 'holes');
     end
     save([depthStackFile(1:end-21) '_Binarize_' depthStackFile(end-4:end)], 'binImgStack', '-v7.3')
 else

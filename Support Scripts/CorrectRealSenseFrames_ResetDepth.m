@@ -26,10 +26,10 @@ if ~exist([depthStackFile(1:end-21) '_ProcDepthStack_' depthStackFile(end-4:end)
     procImgStack = zeros(size(binOverlayImgStack,1), size(binOverlayImgStack,2), size(binOverlayImgStack,3));
     for a = 1:size(binOverlayImgStack,3)
         disp(['Setting zero-pixels to desired colormap height in image... (' num2str(a) '/' num2str(length(binOverlayImgStack)) ')']); disp(' ')
-        compImg = imcomplement(binOverlayImgStack(:,:,a));
-        tempDepthImg = binOverlayImgStack(:,:,a);
-        tempDepthImg(logical(compImg)) = SuppData.(stackID).caxis(2);
-        procImgStack(:,:,a) = tempDepthImg;
+        depthImg = binOverlayImgStack(:,:,a);
+        logicalImg = depthImg == 0; 
+        depthImg(logicalImg) = SuppData.caxis(2);
+        procImgStack(:,:,a) = depthImg;
     end
     save([depthStackFile(1:end-21) '_ProcDepthStack_' depthStackFile(end-4:end)], 'procImgStack', '-v7.3')
 else

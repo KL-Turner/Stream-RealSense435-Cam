@@ -1,4 +1,4 @@
-function [] = TrackObjectMotion(procDepthStackFile)
+function [] = TrackObjectMotion(binDepthStackFile, supplementalFile)
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -15,24 +15,20 @@ function [] = TrackObjectMotion(procDepthStackFile)
 %   Last Revised:
 %________________________________________________________________________________________________________________________
 
-load(procDepthStackFile)
+load(binDepthStackFile)
+load(supplementalFile)
 
 distanceTraveled = 0;
-for a = 1:length(procDepthStack)
-    if a == length(procDepthStack)
+for a = 1:length(binDepthStack)
+    if a == length(binDepthStack)
         break
     else
-        imageA = procDepthStack(a);
-        imageB = procDepthStack(a+1);
+        imageA = binDepthStack(:,:,a);
+        imageB = binDepthStack(a+1);
         
-        stats = regionprops(yourimage);
-        centroid = stats.centroid;
+        [y, x] = ndgrid(1:size(imageA, 1), 1:size(imageA, 2));
+        centroid = mean([x(logical(imageA)), y(logical(imageA))]);
         
-        [y, x] = ndgrid(1:size(yourimage, 1), 1:size(yourimage, 2));
-        centroid = mean([x(logical(yourimage)), y(logical(yourimage))]);
-        
-        centA = centroid(imageA);
-        centB = centroid(imageB);
         X = [centB, centA];
         dist = pdist(X, 'euclidean');
         distanceTraveled = distanceTraveled+dist;
