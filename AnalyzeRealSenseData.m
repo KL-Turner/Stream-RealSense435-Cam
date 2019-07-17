@@ -81,7 +81,7 @@ ConvertRealSenseToAVI(procStackFile, supplementalFile, 'FullyProcDepthStack');
 % TrackObjectHeight(procStackFile, supplementalFile);
 
 %% Track object motion in video
-binStackDirectory = dir('*BincDepthStack.mat');
+binStackDirectory = dir('*BinDepthStack.mat');
 binStackFiles = {binStackDirectory.name}';
 binStackFile = char(binStackFiles);
 TrackObjectMotion(binStackFile, supplementalFile);

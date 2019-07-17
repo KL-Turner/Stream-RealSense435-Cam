@@ -1,4 +1,4 @@
-function [] = TrackObjectMotion(binDepthStackFile, supplementalFile)
+function [Results] = TrackObjectMotion(binDepthStackFile, supplementalFile)
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -15,22 +15,32 @@ function [] = TrackObjectMotion(binDepthStackFile, supplementalFile)
 %   Last Revised:
 %________________________________________________________________________________________________________________________
 
+disp('Tracking object motion:'); disp(' ')
 load(binDepthStackFile)
 load(supplementalFile)
 
 distanceTraveled = 0;
-for a = 1:length(binDepthStack)
-    if a == length(binDepthStack)
+distancePath = zeros(1,length(binDepthStack));
+for x = 1:length(binDepthStack)
+    if x == length(binDepthStack)
         break
     else
-        imageA = binDepthStack(:,:,a);
-        imageB = binDepthStack(a+1);
+        imageA = binDepthStack(:,:,x);
+        [yA,xA] = ndgrid(1:size(imageA,1), 1:size(imageA,2));
+        centroidA = mean([xA(logical(imageA)), yA(logical(imageA))]);
         
-        [y, x] = ndgrid(1:size(imageA, 1), 1:size(imageA, 2));
-        centroid = mean([x(logical(imageA)), y(logical(imageA))]);
+        imageB = binDepthStack(:,:,1000);
+        [yB,xB] = ndgrid(1:size(imageB,1), 1:size(imageB,2));
+        centroidB = mean([xB(logical(imageB)), yB(logical(imageB))]);
         
-        X = [centB, centA];
-        dist = pdist(X, 'euclidean');
-        distanceTraveled = distanceTraveled+dist;
+        centroidCoord = [centroidB; centroidA];
+        distance = pdist(centroidCoord, 'euclidean');
+        distanceTraveled = distanceTraveled+distance;
+        distancePath(1,x) = distanceTraveled;
     end
+end
+
+Results.distanceTraveled = distanceTraveled;
+Results.distancePath = distancePath;
+
 end
