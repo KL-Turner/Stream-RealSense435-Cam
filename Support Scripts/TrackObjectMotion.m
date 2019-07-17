@@ -1,4 +1,4 @@
-function [Results] = TrackObjectMotion(binDepthStackFile, supplementalFile)
+function [] = TrackObjectMotion(binDepthStackFile, supplementalFile)
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -16,8 +16,10 @@ function [Results] = TrackObjectMotion(binDepthStackFile, supplementalFile)
 %________________________________________________________________________________________________________________________
 
 disp('Tracking object motion:'); disp(' ')
+resultsFile = [supplementalFile(1:end-20) 'Results.mat'];
 load(binDepthStackFile)
 load(supplementalFile)
+load(resultsFile)
 
 distanceTraveled = 0;
 distancePath = zeros(1,length(binDepthStack));
@@ -42,5 +44,6 @@ end
 
 Results.distanceTraveled = distanceTraveled;
 Results.distancePath = distancePath;
+save(resultsFile, 'Results')
 
 end
