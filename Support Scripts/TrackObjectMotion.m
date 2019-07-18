@@ -15,7 +15,7 @@ function [] = TrackObjectMotion(binDepthStackFile, supplementalFile)
 %   Last Revised:
 %________________________________________________________________________________________________________________________
 
-disp('Tracking object motion:'); disp(' ')
+disp('Tracking object motion...'); disp(' ')
 resultsFile = [supplementalFile(1:end-20) 'Results.mat'];
 load(binDepthStackFile)
 load(supplementalFile)
@@ -41,6 +41,8 @@ for x = 1:length(binDepthStack)
         distancePath(1,x) = distanceTraveled;
     end
 end
+
+figure;
 
 Results.distanceTraveled = distanceTraveled;
 Results.distancePath = distancePath;

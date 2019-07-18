@@ -41,18 +41,6 @@ elseif strcmp(inputType, 'FullyProcDepthStack')
         outputVideo = VideoWriter([fileName(1:end-4) '_5xSpeed.avi']);
         outputVideo.FrameRate = SuppData.samplingRate*5;
         open(outputVideo);
-        cMin(1,1) = SuppData.depthStack_A.caxis(1,1);
-        cMin(1,2) = SuppData.depthStack_B.caxis(1,1); 
-        cMin(1,3) = SuppData.depthStack_C.caxis(1,1); 
-        caxisMin = min(cMin);
-        
-        cMax(1,1) = SuppData.depthStack_A.caxis(1,2);
-        cMax(1,2) = SuppData.depthStack_B.caxis(1,2);
-        cMax(1,3) = SuppData.depthStack_C.caxis(1,2);
-        caxisMax = max(cMax);
-        
-        SuppData.caxis = [caxisMin caxisMax];
-        save(supplementalFile, 'SuppData')
         for b = 1:length(procDepthStack)
             disp(['Processing fully-processed depth stack .AVI frame... (' num2str(b) '/' num2str(size(procDepthStack,3)) ')']); disp(' ') 
             imagesc(procDepthStack(:,:,b));

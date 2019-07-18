@@ -16,6 +16,7 @@ function [] = TrackObjectHeight(procStackFile, supplementalFile)
 %________________________________________________________________________________________________________________________
 
 %%
+disp('Tracking object height...'); disp(' ')
 resultsFile = [supplementalFile(1:end-20) 'Results.mat'];
 load(procStackFile)
 load(supplementalFile)

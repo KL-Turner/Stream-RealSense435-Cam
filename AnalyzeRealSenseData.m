@@ -23,7 +23,7 @@ depthStackDirectory = dir('*TrueDepthStack.mat');
 depthStackFiles = {depthStackDirectory.name}';
 depthStackFile = char(depthStackFiles);
 delimiters = strfind(depthStackFile, '_');
-date = depthStackFile(1:delimiters(4)-1);
+date = depthStackFile(1:delimiters(3)-1);
 supplementalFile = [date '_SupplementalData.mat'];
 if ~exist(supplementalFile, 'file')
     DrawAnalysisROIs(depthStackFile);
@@ -38,9 +38,9 @@ for b = 1:size(depthStacks,2)
     if ~exist([depthStackFile(1:end-21) '_ProcDepthStack_' depthStackFile(end-4:end)], 'file')
         disp(['Processing TrueDepthStack file... (' num2str(b) '/' num2str(size(depthStacks,2)) ')']); disp(' ')
         delimiters = strfind(depthStackFile, '_');
-        date = depthStackFile(1:delimiters(4)-1);
+        date = depthStackFile(1:delimiters(3)-1);
         supplementalFile = [date '_SupplementalData.mat'];
-        CorrectRealSenseFrames_PatchHoles(depthStackFile, supplementalFile);
+        CorrectRealSenseFrames_PatchHoles(depthStackFile, supplementalFile)
         CorrectRealSenseFrames_ImageMask(depthStackFile, supplementalFile)
         CorrectRealSenseFrames_KalmanFilter(depthStackFile)
         CorrectRealSenseFrames_MeanSub(depthStackFile)
@@ -55,7 +55,7 @@ RGBStackDirectory = dir('*RGBStack.mat');
 RGBStackFiles = {RGBStackDirectory.name}';
 RGBStackFile = char(RGBStackFiles);
 ConvertRealSenseToAVI(RGBStackFile, supplementalFile, 'RGBStack');
-
+CorrectColorScale(supplementalFile)
 for c = 1:size(depthStacks,2)
     depthStackFile = depthStacks{1,c};
     CorrectRealSenseFrames_ResetDepth(depthStackFile, supplementalFile)
