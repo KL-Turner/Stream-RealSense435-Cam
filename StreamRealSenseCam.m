@@ -64,7 +64,7 @@ for a = 1:numTrials
         disp('Saving depth stack...'); disp(' ')
         save(savePath2, 'DepthStack', '-v7.3')
         % Supplemental data
-        savePath3 = join([filePath '\' fileID2], '');
+        savePath3 = join([filePath '\' fileID3], '');
         disp('Saving supplemental data...'); disp(' ')
         save(savePath3, 'SuppData')
     catch
