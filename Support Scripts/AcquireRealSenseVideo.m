@@ -47,7 +47,7 @@ end
 testFrameCount = 0;
 while testFrameCount < 60
     testFrameCount = testFrameCount + 1;
-
+    
     % Acquire frame, align, and get colorized data
     fs = pipe.wait_for_frames();
     alignedFrames = alignedFs.process(fs);
@@ -64,29 +64,33 @@ close all
 %% Acquire data stream
 frameCount = 0;
 tic;
+a = 1;
 while frameCount < numFramesToAcquire
     multiWaitbar_RealSense('Streaming RealSense Camera', 'Busy', 'Color', [0.1 0.5 0.8]);
     frameCount = frameCount + 1;
     frameTime = clock;
-    RS_RGBStack.frameTime{frameCount, 1} = frameTime;
-    RS_TrueDepthStack.frameTime{frameCount, 1} = frameTime;
-
-    % Acquire frame, align, and get colorized data
-    fs = pipe.wait_for_frames();
-    
-    % True color rgb image
-    rgbFrame = fs.get_color_frame();
-    rgbData = rgbFrame.get_data();
-    RS_RGBStack.RGBStack{frameCount, 1} = permute(reshape(rgbData',[3, rgbFrame.get_width(), rgbFrame.get_height()]), [3 2 1]);
-
-    % Accurate depth information, no auto-scaling of color
-    depthSensor = devID.first('depth_sensor');
-    depthScale = depthSensor.get_depth_scale();
-    depthWidth = depthFrame.get_width();
-    depthHeight = depthFrame.get_height();
-    depthVector = depthFrame.get_data();
-    RS_TrueDepthStack.trueDepthStack{frameCount, 1} = double(transpose(reshape(depthVector, [depthWidth, depthHeight]))).*depthScale;
+    if rem(frameCount, 2) == true
+        RS_RGBStack.frameTime{a, 1} = frameTime;
+        RS_TrueDepthStack.frameTime{a, 1} = frameTime;        
+        % Acquire frame, align, and get colorized data
+        fs = pipe.wait_for_frames();
+        
+        % True color rgb image
+        rgbFrame = fs.get_color_frame();
+        rgbData = rgbFrame.get_data();
+        RS_RGBStack.RGBStack{a, 1} = permute(reshape(rgbData',[3, rgbFrame.get_width(), rgbFrame.get_height()]), [3 2 1]);
+        
+        % Accurate depth information, no auto-scaling of color
+        depthSensor = devID.first('depth_sensor');
+        depthScale = depthSensor.get_depth_scale();
+        depthWidth = depthFrame.get_width();
+        depthHeight = depthFrame.get_height();
+        depthVector = depthFrame.get_data();
+        RS_TrueDepthStack.trueDepthStack{a, 1} = double(transpose(reshape(depthVector, [depthWidth, depthHeight]))).*depthScale;
+        a = a + 1; 
+    end 
 end
+
 pipe.stop();
 elapsedTime = toc;
 multiWaitbar_RealSense('Streaming RealSense Camera', 'Close');

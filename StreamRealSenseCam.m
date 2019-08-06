@@ -18,7 +18,7 @@ clear
 clc
 numTrials = input('How many trials would you like to stream for? (20 minutes per trial): '); disp(' ')
 trialDuration = 20*60;
-defaultSamplingRate = 15;
+defaultSamplingRate = 30;
 numFramesToAcquire = trialDuration*defaultSamplingRate;
 disp('Select or create the folder to save the data:'); disp(' ')
 filePath = uigetdir(cd, 'Select or create the folder to save the data');
@@ -50,14 +50,14 @@ for a = 1:numTrials
     
     RS_RGBStack.numFrames = numFramesToAcquire;
     RS_RGBStack.trialDuration = trialDuration;
-    RS_RGBStack.samplingRate = defaultSamplingRate;
+    RS_RGBStack.samplingRate = 15;
     savePath1 = join([filePath '\' fileID1], '');
     disp('Saving RGB stack...'); disp(' ')
     save(savePath1, 'RS_RGBStack', '-v7.3')
  
-    RS_TrueDepthStack.numFrames = numFramesToAcquire;
+    RS_TrueDepthStackS_TrueDepthStack.numFrames = numFramesToAcquire;
     RS_TrueDepthStack.trialDuration = trialDuration;
-    RS_TrueDepthStack.samplingRate = defaultSamplingRate;
+    RS_TrueDepthStack.samplingRate = 15;
     savePath2 = join([filePath '\' fileID2], '');
     disp('Saving depth stack...'); disp(' ')
     save(savePath2, 'RS_TrueDepthStack', '-v7.3')
