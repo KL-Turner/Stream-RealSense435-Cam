@@ -1,4 +1,4 @@
-function [RS_RGBStack, RS_TrueDepthStack] = AcquireRealSenseVideo(numFramesToAcquire, trialDuration)
+function [RGBStack, DepthStack, SuppData] = AcquireRealSenseVideo(numFramesToAcquire, trialDuration)
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -26,17 +26,16 @@ devID = profile.get_device();
 camName = devID.get_info(realsense.camera_info.name);
 
 % Pre-allocate image size and number of frames
-RS_ColorizedDepthStack.cameraID = camName;
-RS_RGBStack.cameraID = camName;
-RS_TrueDepthStack.cameraID = camName;
+SuppData.cameraID = camName;
 
 imgMatSize = zeros(480, 640);
-frameLength = cell(numFramesToAcquire, 1);
-for a = 1:length(frameLength)
-    frameLength{a, 1} = imgMatSize;
+framePreAloc = cell(numFramesToAcquire, 1);
+SuppData.frameTime = cell(numFramesToAcquire, 1);
+for a = 1:length(framePreAloc)
+    framePreAloc{a, 1} = imgMatSize;
 end
-RS_RGBStack.RGBStack = frameLength;
-RS_TrueDepthStack.trueDepthStack = frameLength;
+RGBStack = framePreAloc;
+DepthStack = framePreAloc;
     
 % Allow camera to warm up for a few frames
 for b = 1:15
@@ -47,7 +46,6 @@ end
 testFrameCount = 0;
 while testFrameCount < 60
     testFrameCount = testFrameCount + 1;
-    
     % Acquire frame, align, and get colorized data
     fs = pipe.wait_for_frames();
     alignedFrames = alignedFs.process(fs);
@@ -68,17 +66,18 @@ a = 1;
 while frameCount < numFramesToAcquire
     multiWaitbar_RealSense('Streaming RealSense Camera', 'Busy', 'Color', [0.1 0.5 0.8]);
     frameCount = frameCount + 1;
-    frameTime = clock;
+    frameT = clock;
+    % Only save the odd frames. 30 Fs is too much data -> 15 Fs
     if rem(frameCount, 2) == true
-        RS_RGBStack.frameTime{a, 1} = frameTime;
-        RS_TrueDepthStack.frameTime{a, 1} = frameTime;        
+        % Time of the frame
+        SuppData.frameTime{a,1} = frameT;
         % Acquire frame, align, and get colorized data
         fs = pipe.wait_for_frames();
         
         % True color rgb image
         rgbFrame = fs.get_color_frame();
         rgbData = rgbFrame.get_data();
-        RS_RGBStack.RGBStack{a, 1} = permute(reshape(rgbData',[3, rgbFrame.get_width(), rgbFrame.get_height()]), [3 2 1]);
+        RGBStack{a,1} = permute(reshape(rgbData',[3, rgbFrame.get_width(), rgbFrame.get_height()]), [3 2 1]);
         
         % Accurate depth information, no auto-scaling of color
         depthSensor = devID.first('depth_sensor');
@@ -86,7 +85,7 @@ while frameCount < numFramesToAcquire
         depthWidth = depthFrame.get_width();
         depthHeight = depthFrame.get_height();
         depthVector = depthFrame.get_data();
-        RS_TrueDepthStack.trueDepthStack{a, 1} = double(transpose(reshape(depthVector, [depthWidth, depthHeight]))).*depthScale;
+        DepthStack{a,1} = double(transpose(reshape(depthVector, [depthWidth, depthHeight]))).*depthScale;
         a = a + 1; 
     end 
 end
