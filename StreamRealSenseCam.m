@@ -49,23 +49,27 @@ for a = 1:numTrials
     fileID2 = join([animalID '_' currentTime '_DepthStack.mat'], '');
     fileID3 = join([animalID '_' currentTime '_SupplementalData.mat'], '');
     disp('Acquiring RealSense D435 camera video...'); disp(' ')
-    [RGBStack, TrueDepthStack, SuppData] = AcquireRealSenseVideo(numFramesToAcquire, trialDuration);
-    SuppData.numFrames = numFramesToAcquire;
+    [RGBStack, DepthStack, SuppData] = AcquireRealSenseVideo(numFramesToAcquire, trialDuration);
+    SuppData.numFrames = numFramesToAcquire/2;
     SuppData.trialDuration = trialDuration;
     SuppData.samplingRate = 15;
     
-    % RGB stack
-    savePath1 = join([filePath '\' fileID1], '');
-    disp('Saving RGB stack...'); disp(' ')
-    save(savePath1, 'RGBStack', '-v7.3')
-    % Depth stack
-    savePath2 = join([filePath '\' fileID2], '');
-    disp('Saving depth stack...'); disp(' ')
-    save(savePath2, 'TrueDepthStack', '-v7.3')
-    % Supplemental data
-    savePath3 = join([filePath '\' fileID2], '');
-    disp('Saving supplemental data...'); disp(' ')
-    save(savePath3, 'SuppData')
+    try
+        % RGB stack
+        savePath1 = join([filePath '\' fileID1], '');
+        disp('Saving RGB stack...'); disp(' ')
+        save(savePath1, 'RGBStack', '-v7.3')
+        % Depth stack
+        savePath2 = join([filePath '\' fileID2], '');
+        disp('Saving depth stack...'); disp(' ')
+        save(savePath2, 'DepthStack', '-v7.3')
+        % Supplemental data
+        savePath3 = join([filePath '\' fileID2], '');
+        disp('Saving supplemental data...'); disp(' ')
+        save(savePath3, 'SuppData')
+    catch
+        keyboard
+    end
 end
 disp('RealSense camera streaming - complete'); disp(' ')
 f = msgbox('Data Save Complete', 'Success');
