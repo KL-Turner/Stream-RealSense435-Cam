@@ -20,8 +20,8 @@ clc
 numTrials = input('How many trials would you like to stream for? (20 minutes per trial): '); disp(' ')
 animalID = input('Input the animal ID: ','s'); disp(' ')
 trialDuration = 20*60;   % min per trial*sec
-defaultSamplingRate = 30;
-numFramesToAcquire = trialDuration*defaultSamplingRate;
+approxSamplingRate = 30;
+numFramesToAcquire = trialDuration*approxSamplingRate;
 disp('Select or create the folder to save the data:'); disp(' ')
 filePath = uigetdir(cd, 'Select or create the folder to save the data');
 

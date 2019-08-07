@@ -17,7 +17,7 @@ function [RGBStack, DepthStack, SuppData] = AcquireRealSenseVideo(numFramesToAcq
 
 % Setup RealSense camera
 pipe = realsense.pipeline();
-colorizer = realsense.colorizer();
+colorizer = realsense.colorizer(); %#ok<NASGU>
 align_to = realsense.stream.color;
 alignedFs = realsense.align(align_to);
 
@@ -37,26 +37,9 @@ RGBStack = framePreAloc;
 DepthStack = framePreAloc;
 
 % Allow camera to warm up for a few frames
-for b = 1:90
+for b = 1:120
     pipe.wait_for_frames();
 end
-
-%% Preview camera stream
-testFrameCount = 0;
-while testFrameCount < 60
-    testFrameCount = testFrameCount + 1;
-    % Acquire frame, align, and get colorized data
-    fs = pipe.wait_for_frames();
-    alignedFrames = alignedFs.process(fs);
-    
-    % Pseudo-colorized depth image
-    depthFrame = alignedFrames.get_depth_frame();
-    depthColor = colorizer.colorize(depthFrame);
-    depthData = depthColor.get_data();
-    colorizedDepthImg = permute(reshape(depthData',[3, depthColor.get_width(), depthColor.get_height()]), [3 2 1]);
-    imshow(colorizedDepthImg)
-end
-close all
 
 %% Acquire data stream
 frameCount = 0;
@@ -68,6 +51,7 @@ while frameCount < numFramesToAcquire
     frameT = clock;
     % Acquire frame, align, and get colorized data
     fs = pipe.wait_for_frames();
+    alignedFrames = alignedFs.process(fs);
     
     % True color rgb image
     rgbFrame = fs.get_color_frame();
@@ -77,10 +61,18 @@ while frameCount < numFramesToAcquire
     % Accurate depth information, no auto-scaling of color
     depthSensor = devID.first('depth_sensor');
     depthScale = depthSensor.get_depth_scale();
+    depthFrame = alignedFrames.get_depth_frame();
+    
     depthWidth = depthFrame.get_width();
     depthHeight = depthFrame.get_height();
     depthVector = depthFrame.get_data();
     DepthImg = double(transpose(reshape(depthVector, [depthWidth, depthHeight]))).*depthScale;
+
+%     % Colorized image for viewing
+%     depthColor = colorizer.colorize(depthFrame);
+%     depthData = depthColor.get_data();
+%     colorizedDepthImg = permute(reshape(depthData',[3, depthColor.get_width(), depthColor.get_height()]), [3 2 1]);
+%     imshow(colorizedDepthImg)
     
     % Only save every other frame. 30 Fs is too much data -> 15 Fs
     if rem(frameCount,2) == 1

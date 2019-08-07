@@ -19,7 +19,7 @@ clc
 
 %% Draw ROIs for motion tracking
 disp('Verifying that ROIs exist for each day...'); disp(' ')
-depthStackDirectory = dir('*TrueDepthStack.mat');
+depthStackDirectory = dir('*DepthStack.mat');
 depthStackFiles = {depthStackDirectory.name}';
 depthStackFile = char(depthStackFiles);
 delimiters = strfind(depthStackFile, '_');
