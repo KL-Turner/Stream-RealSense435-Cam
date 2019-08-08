@@ -1,4 +1,4 @@
-function DrawAnalysisROIs(depthStackFile)
+function DrawAnalysisROIs(depthStackFile, supplementalFile)
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
@@ -16,8 +16,8 @@ function DrawAnalysisROIs(depthStackFile)
 %________________________________________________________________________________________________________________________
 
 load(depthStackFile)
-frame = RS_TrueDepthStack.trueDepthStack{1,1};
-supplementalFile = [depthStackFile(1:end - 28) '_SupplementalData.mat'];
+frame = DepthStack{1,1};
+load(supplementalFile)
 
 %% Cage region of interest
 yString = 'y';
@@ -73,21 +73,15 @@ while strcmp(yString, theInput) ~= 1
     end
 end
 
-SuppData.cameraID = RS_TrueDepthStack.cameraID;
-SuppData.frameTime = RS_TrueDepthStack.frameTime;
-SuppData.numFrames = RS_TrueDepthStack.numFrames;
-SuppData.trialDuration = RS_TrueDepthStack.trialDuration;
-SuppData.samplingRate = RS_TrueDepthStack.samplingRate;
-
 save(supplementalFile, 'SuppData')
 
-depthStack_A = RS_TrueDepthStack.trueDepthStack(1:6000);
-depthStack_B = RS_TrueDepthStack.trueDepthStack(6001:12000);
-depthStack_C = RS_TrueDepthStack.trueDepthStack(12001:18000);
+depthStack_A = DepthStack(1:6000);
+depthStack_B = DepthStack(6001:12000);
+depthStack_C = DepthStack(12001:18000);
 
-save([depthStackFile(1:end - 19) '_TrueDepthStack_A.mat'], 'depthStack_A', '-v7.3');
-save([depthStackFile(1:end - 19) '_TrueDepthStack_B.mat'], 'depthStack_B', '-v7.3');
-save([depthStackFile(1:end - 19) '_TrueDepthStack_C.mat'], 'depthStack_C', '-v7.3');
+save([depthStackFile(1:end - 15) '_TrueDepthStack_A.mat'], 'depthStack_A', '-v7.3');
+save([depthStackFile(1:end - 15) '_TrueDepthStack_B.mat'], 'depthStack_B', '-v7.3');
+save([depthStackFile(1:end - 15) '_TrueDepthStack_C.mat'], 'depthStack_C', '-v7.3');
 
 end
 

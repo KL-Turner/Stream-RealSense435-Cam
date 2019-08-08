@@ -19,16 +19,12 @@ clc
 
 %% Draw ROIs for motion tracking
 disp('Verifying that ROIs exist for each day...'); disp(' ')
-depthStackDirectory = dir('*DepthStack.mat');
+depthStackDirectory = dir('*_DepthStack.mat');
 depthStackFiles = {depthStackDirectory.name}';
 depthStackFile = char(depthStackFiles);
-delimiters = strfind(depthStackFile, '_');
-date = depthStackFile(1:delimiters(3)-1);
-supplementalFile = [date '_SupplementalData.mat'];
-if ~exist(supplementalFile, 'file')
-    DrawAnalysisROIs(depthStackFile);
-else
-    disp('Supplemental data file exists. Continuing...'); disp(' ')
+supplementalFile = [depthStackFile(1:end - 15) '_SupplementalData.mat'];
+if ~exist([depthStackFile(1:end - 15) '_TrueDepthStack_A.mat'])
+    DrawAnalysisROIs(depthStackFile, supplementalFile);
 end
 depthStacks = uigetfile('Multiselect', 'on');
 
@@ -37,9 +33,6 @@ for b = 1:size(depthStacks,2)
     depthStackFile = depthStacks{1,b};
     if ~exist([depthStackFile(1:end-21) '_ProcDepthStack_' depthStackFile(end-4:end)], 'file')
         disp(['Processing TrueDepthStack file... (' num2str(b) '/' num2str(size(depthStacks,2)) ')']); disp(' ')
-        delimiters = strfind(depthStackFile, '_');
-        date = depthStackFile(1:delimiters(3)-1);
-        supplementalFile = [date '_SupplementalData.mat'];
         CorrectRealSenseFrames_PatchHoles(depthStackFile, supplementalFile)
         CorrectRealSenseFrames_ImageMask(depthStackFile, supplementalFile)
         CorrectRealSenseFrames_KalmanFilter(depthStackFile)

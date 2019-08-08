@@ -24,9 +24,9 @@ if strcmp(inputType, 'RGBStack')
         outputVideo = VideoWriter([fileName(1:end-4) '_5xSpeed.avi']);
         outputVideo.FrameRate = SuppData.samplingRate*5;
         open(outputVideo);
-        for a = 1:length(RS_RGBStack.RGBStack)
-            disp(['Processing RGB stack .AVI frame... (' num2str(a) '/' num2str(length(RS_RGBStack.RGBStack)) ')']); disp(' ')
-            writeVideo(outputVideo, im2frame(RS_RGBStack.RGBStack{a,1}));
+        for a = 1:length(RGBStack)
+            disp(['Processing RGB stack .AVI frame... (' num2str(a) '/' num2str(length(RGBStack)) ')']); disp(' ')
+            writeVideo(outputVideo, im2frame(RGBStack{a,1}));
         end
         close(outputVideo)
         disp('RGB stack 5X speed .AVI movie - complete'); disp(' ')
