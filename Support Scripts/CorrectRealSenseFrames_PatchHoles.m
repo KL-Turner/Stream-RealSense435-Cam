@@ -27,8 +27,10 @@ if ~exist([depthStackFile(1:end-21) '_PatchedHoles_' depthStackFile(end-4:end)],
     for a = 1:length(depthStack)
         disp(['Filling image holes... (' num2str(a) '/' num2str(length(depthStack)) ')']); disp(' ') 
         image = depthStack{a,1};
-        onesIndeces = image >= 1;
-        image(onesIndeces) = 0;
+        maxIndeces = image >= (SuppData.mouseBodyVal + 0.15);
+        subIndeces = image <= (SuppData.mouseBodyVal - 0.15);
+        image(maxIndeces) = 0;
+        image(subIndeces) = 0;
         zeroIndeces = image == 0;
         allImgs{a,1} = regionfill(image,zeroIndeces);
     end

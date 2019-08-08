@@ -73,6 +73,19 @@ while strcmp(yString, theInput) ~= 1
     end
 end
 
+%% Mouse region of interest
+disp('Draw an ROI around the mouse'); disp(' ')
+drawROI = figure;
+imagesc(frame)
+title('Click and drag an ROI around the mouse');
+colormap jet
+axis image
+axis off
+mouseROI = roipoly();
+SuppData.mouseBodyVal = mean(frame(mouseROI));
+close(drawROI)
+
+%% Save structures
 save(supplementalFile, 'SuppData')
 
 depthStack_A = DepthStack(1:6000);
