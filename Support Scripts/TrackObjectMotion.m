@@ -43,6 +43,10 @@ for x = 1:length(binDepthStack)
 end
 
 figure;
+plot((1:length(distancePath))/15, distancePath)
+title('Distance traveled')
+ylabel('Pixels')
+xlabel('~Time (sec)')
 
 Results.distanceTraveled = distanceTraveled;
 Results.distancePath = distancePath;
