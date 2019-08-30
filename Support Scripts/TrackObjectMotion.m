@@ -25,18 +25,21 @@ distanceTraveled = 0;
 distancePath = zeros(1,length(binDepthStack));
 for x = 1:length(binDepthStack)
     if x == length(binDepthStack)
-        break
+        distancePath(1,x) = distanceTraveled;
     else
         imageA = binDepthStack(:,:,x);
         [yA,xA] = ndgrid(1:size(imageA,1), 1:size(imageA,2));
         centroidA = mean([xA(logical(imageA)), yA(logical(imageA))]);
         
-        imageB = binDepthStack(:,:,1000);
+        imageB = binDepthStack(:,:,x+1);
         [yB,xB] = ndgrid(1:size(imageB,1), 1:size(imageB,2));
         centroidB = mean([xB(logical(imageB)), yB(logical(imageB))]);
         
         centroidCoord = [centroidB; centroidA];
         distance = pdist(centroidCoord, 'euclidean');
+        if isnan(distance) == true
+            distance = 0;
+        end
         distanceTraveled = distanceTraveled+distance;
         distancePath(1,x) = distanceTraveled;
     end

@@ -85,6 +85,18 @@ mouseROI = roipoly();
 SuppData.mouseBodyVal = mean(frame(mouseROI));
 close(drawROI)
 
+%% Pixel distance
+disp('Draw a line the width of the bin'); disp(' ')
+drawROI = figure;
+imagesc(frame)
+title('Click and drag an a line the width of the bin');
+colormap jet
+axis image
+axis off
+cageROI = drawline();
+SuppData.mouseBodyVal = mean(frame(mouseROI));
+close(drawROI)
+
 %% Save structures
 save(supplementalFile, 'SuppData')
 

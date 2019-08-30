@@ -4,7 +4,7 @@
 % https://github.com/KL-Turner
 %________________________________________________________________________________________________________________________
 %
-%   Purpse:
+%   Purpose:
 %________________________________________________________________________________________________________________________
 %
 %   Inputs:
@@ -23,7 +23,7 @@ depthStackDirectory = dir('*_DepthStack.mat');
 depthStackFiles = {depthStackDirectory.name}';
 depthStackFile = char(depthStackFiles);
 supplementalFile = [depthStackFile(1:end - 15) '_SupplementalData.mat'];
-if ~exist([depthStackFile(1:end - 15) '_TrueDepthStack_A.mat'])
+if ~exist([depthStackFile(1:end - 15) '_TrueDepthStack_A.mat'], 'file')
     DrawAnalysisROIs(depthStackFile, supplementalFile);
 end
 depthStacks = uigetfile('Multiselect', 'on');
