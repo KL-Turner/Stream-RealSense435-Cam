@@ -26,7 +26,10 @@ supplementalFile = [depthStackFile(1:end - 15) '_SupplementalData.mat'];
 if ~exist([depthStackFile(1:end - 15) '_TrueDepthStack_A.mat'], 'file')
     DrawAnalysisROIs(depthStackFile, supplementalFile);
 end
-depthStacks = uigetfile('Multiselect', 'on');
+depthStackA = [depthStackFile(1:end - 15) '_TrueDepthStack_A.mat'];
+depthStackB = [depthStackFile(1:end - 15) '_TrueDepthStack_B.mat'];
+depthStackC = [depthStackFile(1:end - 15) '_TrueDepthStack_C.mat'];
+depthStacks = {depthStackA, depthStackB, depthStackC};
 
 %% Process the depth stack frames
 for b = 1:size(depthStacks,2)
