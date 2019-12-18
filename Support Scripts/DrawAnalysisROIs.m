@@ -23,7 +23,6 @@ load(supplementalFile)
 yString = 'y';
 theInput = 'n';
 while strcmp(yString, theInput) ~= 1
-    
     % Draw ROI
     disp('Draw a rectanglular ROI around the cage'); disp(' ')
     drawROI = figure;
@@ -33,8 +32,7 @@ while strcmp(yString, theInput) ~= 1
     axis off
     cageROI = drawrectangle();
     SuppData.cage = cageROI.Position;
-    close(drawROI)
-    
+    close(drawROI)  
     % Verify ROI
     checkROI = figure;
     imagesc(frame);
@@ -55,8 +53,7 @@ end
 %% Mouse region of interest
 yString = 'y';
 theInput = 'n';
-while strcmp(yString, theInput) ~= 1
-    
+while strcmp(yString, theInput) ~= 1   
     % Draw ROI
     disp('Draw an ROI around the mouse'); disp(' ')
     drawROI = figure;
@@ -68,7 +65,6 @@ while strcmp(yString, theInput) ~= 1
     [mouseROI, xi, yi] = roipoly();
     SuppData.mouseBodyVal = mean(frame(mouseROI));
     close(drawROI)
-    
     % Verify ROI
     checkROI = figure;
     imagesc(frame)
@@ -89,8 +85,7 @@ end
 %% Bin width line
 yString = 'y';
 theInput = 'n';
-while strcmp(yString, theInput) ~= 1
-    
+while strcmp(yString, theInput) ~= 1  
     % Draw ROI
     disp('Draw a line the width of the bin'); disp(' ')
     drawROI = figure;
@@ -106,11 +101,10 @@ while strcmp(yString, theInput) ~= 1
     cageLine = drawline();
     L1 = cageLine.Position(1);
     L2 = cageLine.Position(2);
-    close(drawROI)
-    
+    close(drawROI)  
     % Verify ROI
     checkROI = figure;
-    imagesc(depthStack_A{1,1})
+    imagesc(frame)
     colormap jet
     hold on
     p1=[200 L1];
@@ -129,28 +123,14 @@ while strcmp(yString, theInput) ~= 1
     end
 end
 
-%% Pixel distance
-disp('Draw a line the width of the bin'); disp(' ')
-drawROI = figure;
-imagesc(frame)
-title('Click and drag an a line the width of the bin');
-colormap jet
-axis image
-axis off
-cageROI = drawline();
-SuppData.mouseBodyVal = mean(frame(mouseROI));
-close(drawROI)
-
 %% Save structures
 save(supplementalFile, 'SuppData')
-
 depthStack_A = DepthStack(1:6000);
 depthStack_B = DepthStack(6001:12000);
 depthStack_C = DepthStack(12001:18000);
-
-save([depthStackFile(1:end - 15) '_TrueDepthStack_A.mat'], 'depthStack_A', '-v7.3');
-save([depthStackFile(1:end - 15) '_TrueDepthStack_B.mat'], 'depthStack_B', '-v7.3');
-save([depthStackFile(1:end - 15) '_TrueDepthStack_C.mat'], 'depthStack_C', '-v7.3');
+save([depthStackFile(1:end - 15) '_TrueDepthStack_A.mat'],'depthStack_A','-v7.3');
+save([depthStackFile(1:end - 15) '_TrueDepthStack_B.mat'],'depthStack_B','-v7.3');
+save([depthStackFile(1:end - 15) '_TrueDepthStack_C.mat'],'depthStack_C','-v7.3');
 
 end
 
