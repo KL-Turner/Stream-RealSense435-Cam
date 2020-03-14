@@ -14,10 +14,8 @@
 %   Last Revised: 
 %________________________________________________________________________________________________________________________
 
-clear
-clc
-
-%% Draw ROIs for motion tracking
+clear; clc;
+% draw ROIs for motion tracking
 disp('Verifying that ROIs exist for each day...'); disp(' ')
 depthStackDirectory = dir('*_DepthStack.mat');
 depthStackFiles = {depthStackDirectory.name}';

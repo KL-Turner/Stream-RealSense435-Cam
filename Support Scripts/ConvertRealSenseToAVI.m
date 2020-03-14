@@ -1,44 +1,38 @@
-function [] = ConvertRealSenseToAVI(fileName, supplementalFile, inputType)
+function [] = ConvertRealSenseToAVI(fileName,supplementalFile,inputType)
 %________________________________________________________________________________________________________________________
 % Written by Kevin L. Turner
 % The Pennsylvania State University, Dept. of Biomedical Engineering
 % https://github.com/KL-Turner
 %________________________________________________________________________________________________________________________
 %
-%   Purpse:
-%________________________________________________________________________________________________________________________
-%
-%   Inputs:
-%
-%   Outputs:
-%
-%   Last Revised: 
+% Purpse: Create an avi movie from image stack
 %________________________________________________________________________________________________________________________
 
 close all
 load(supplementalFile)
-if strcmp(inputType, 'RGBStack')
-    if ~exist([fileName(1:end-4) '_5xSpeed.avi'], 'file')
+% RGB movie image stack to avi movie
+if strcmp(inputType,'RGBStack')
+    if ~exist([fileName(1:end - 4) '_5xSpeed.avi'],'file')
         disp('Generating RGB stack .AVI movie (sped-up 5X)...'); disp(' ')
         load(fileName)
-        outputVideo = VideoWriter([fileName(1:end-4) '_5xSpeed.avi']);
+        outputVideo = VideoWriter([fileName(1:end - 4) '_5xSpeed.avi']);
         outputVideo.FrameRate = SuppData.samplingRate*5;
         open(outputVideo);
-        for a = 1:length(RGBStack)
+        for a = 1:length(RGBStack) %#ok<*USENS>
             disp(['Processing RGB stack .AVI frame... (' num2str(a) '/' num2str(length(RGBStack)) ')']); disp(' ')
-            writeVideo(outputVideo, im2frame(RGBStack{a,1}));
+            writeVideo(outputVideo,im2frame(RGBStack{a,1}));
         end
         close(outputVideo)
         disp('RGB stack 5X speed .AVI movie - complete'); disp(' ')
     else
-        disp([fileName(1:end-4) '_5xSpeed.avi already exists. Continuing...']); disp(' ')
+        disp([fileName(1:end - 4) '_5xSpeed.avi already exists. Continuing...']); disp(' ')
     end
-        
-elseif strcmp(inputType, 'FullyProcDepthStack')
-    if ~exist([fileName(1:end-4) '_5xSpeed.avi'], 'file')
+    % processed depth stack stack to avi movie
+elseif strcmp(inputType,'FullyProcDepthStack')
+    if ~exist([fileName(1:end - 4) '_5xSpeed.avi'],'file')
         disp('Generating fully-processed depth stack .AVI movie (sped-up 5X)...'); disp(' ')
         load(fileName) 
-        outputVideo = VideoWriter([fileName(1:end-4) '_5xSpeed.avi']);
+        outputVideo = VideoWriter([fileName(1:end - 4) '_5xSpeed.avi']);
         outputVideo.FrameRate = SuppData.samplingRate*5;
         open(outputVideo);
         for b = 1:length(procDepthStack)
@@ -47,12 +41,12 @@ elseif strcmp(inputType, 'FullyProcDepthStack')
             colormap jet
             caxis(SuppData.caxis)
             currentFrame = getframe;
-            writeVideo(outputVideo, currentFrame);
+            writeVideo(outputVideo,currentFrame);
         end
         close(outputVideo)
         disp('Fully-processed depth stack 5X speed .AVI movie - complete'); disp(' ')
     else
-        disp([fileName(1:end-4) '_5xSpeed.avi already exists. Continuing...']); disp(' ')
+        disp([fileName(1:end - 4) '_5xSpeed.avi already exists. Continuing...']); disp(' ')
     end
 end
 
