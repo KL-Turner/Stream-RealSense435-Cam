@@ -4,7 +4,7 @@
 % https://github.com/KL-Turner
 %________________________________________________________________________________________________________________________
 %
-% Purpose: apply an assortment of image processing techniques to the depth stack in order to track animal height/motion
+%   Purpose:
 %________________________________________________________________________________________________________________________
 
 clear; clc;
@@ -49,6 +49,7 @@ end
 if ~exist([depthStackFile(1:end - 21) '_ProcDepthStack.mat'],'file')
     JoinProcessedFiles(depthStacks,'processed')
 end
+
 %% Skip combining the split files into one if they already exist
 if ~exist([depthStackFile(1:end - 21) '_BinDepthStack.mat'],'file')
     JoinProcessedFiles(depthStacks,'binary')
